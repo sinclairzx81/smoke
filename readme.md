@@ -2,6 +2,8 @@
   <img src="https://github.com/sinclairzx81/smoke/blob/master/docs/logo.png">
 </p>
 
+[![Build Status](https://travis-ci.org/sinclairzx81/smoke.svg?branch=master)](https://travis-ci.org/sinclairzx81/smoke)
+
 ---
 
 # Smoke
