@@ -10,6 +10,7 @@ export async function webpack() {
   ])
 }
 
+// pack
 export async function pack() {
   await shell('smoke-pack pack smoke-hub')
   await shell('smoke-pack pack smoke-node')
