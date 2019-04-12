@@ -2,7 +2,7 @@
   <img src="https://github.com/sinclairzx81/smoke/blob/master/docs/logo.png">
 </p>
 
-[![Build Status](https://travis-ci.org/sinclairzx81/smoke.svg?branch=master)](https://travis-ci.org/sinclairzx81/smoke)
+[![NPM package](https://badge.fury.io/js/smoke-node.svg)](https://www.npmjs.com/package/smoke-node) [![Build Status](https://travis-ci.org/sinclairzx81/smoke.svg?branch=master)](https://travis-ci.org/sinclairzx81/smoke)
 
 ---
 
