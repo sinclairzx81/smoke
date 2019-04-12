@@ -1,3 +1,5 @@
+/*--------------------------------------------------------------------------
+
 @sinclair/smoke
 
 The MIT License (MIT)
@@ -21,3 +23,17 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
+
+---------------------------------------------------------------------------*/
+
+export namespace font {
+  export const bold = '\x1b[1m'
+  export const italic = '\x1b[3m'
+  export const underline = '\x1b[4m'
+  export const font1 = '\x1b[10m'
+  export const font2 = '\x1b[11m'
+  export const font3 = '\x1b[12m'
+  export const font4 = '\x1b[13m'
+  export const font5 = '\x1b[14m'
+  export const font6 = '\x1b[15m'
+}

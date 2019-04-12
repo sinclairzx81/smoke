@@ -1,3 +1,5 @@
+/*--------------------------------------------------------------------------
+
 @sinclair/smoke
 
 The MIT License (MIT)
@@ -21,3 +23,15 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
+
+---------------------------------------------------------------------------*/
+
+export type Result<T> = T extends IDBRequest<infer U> ? U : never
+
+/** Remaps a IDB Request into a Promise<T> */
+export function Request<T extends IDBRequest<any>>(request: T): Promise<Result<T>> {
+  return new Promise((resolve, reject) => {
+    request.addEventListener('success', () => resolve(request.result))
+    request.addEventListener('error', (event) => reject(event))
+  })
+}

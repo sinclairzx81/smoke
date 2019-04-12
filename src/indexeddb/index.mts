@@ -1,3 +1,5 @@
+/*--------------------------------------------------------------------------
+
 @sinclair/smoke
 
 The MIT License (MIT)
@@ -21,3 +23,13 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
+
+---------------------------------------------------------------------------*/
+
+export * from './cursor.mjs'
+export * from './database.mjs'
+export * from './factory.mjs'
+export * from './indexed.mjs'
+export * from './object-store.mjs'
+export * from './request.mjs'
+export * from './transaction.mjs'

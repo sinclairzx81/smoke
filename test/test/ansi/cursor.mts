@@ -1,3 +1,5 @@
+/*--------------------------------------------------------------------------
+
 @sinclair/smoke
 
 The MIT License (MIT)
@@ -21,3 +23,19 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
+
+---------------------------------------------------------------------------*/
+
+export namespace cursor {
+  const csi = '\x1b['
+  export const up = (n: number = 1) => `${csi}${n}A`
+  export const down = (n: number = 1) => `${csi}${n}B`
+  export const forward = (n: number = 1) => `${csi}${n}C`
+  export const backward = (n: number = 1) => `${csi}${n}D`
+  export const nextLine = (n: number = 1) => `${csi}${n}E`
+  export const previousLine = (n: number = 1) => `${csi}${n}F`
+  export const horizontalAbsolute = (n: number) => `${csi}${n}G`
+  export const position = (n: number) => `${csi}${n}H`
+  export const hide = `${csi}?25l`
+  export const show = `${csi}?25h`
+}

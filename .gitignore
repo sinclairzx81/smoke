@@ -1,17 +1,2 @@
 node_modules
-
-# smoke-node
-packages/smoke-node/node_modules
-packages/smoke-node/public
-
-# smoke-bench
-packages/smoke-bench/node_modules
-packages/smoke-bench/public
-
-# smoke-tools
-packages/smoke-hub/node_modules
-packages/smoke-hub/public
-
-# smoke-webpack
-packages/smoke-webpack/node_modules
-packages/smoke-webpack/public
+target

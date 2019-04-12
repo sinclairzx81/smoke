@@ -1,3 +1,5 @@
+/*--------------------------------------------------------------------------
+
 @sinclair/smoke
 
 The MIT License (MIT)
@@ -21,3 +23,20 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
+
+---------------------------------------------------------------------------*/
+
+export interface TimeoutOptions {
+  /** The number of milliseconds before timeout */
+  timeout: number
+  /** An optional error to throw on timeout */
+  error?: Error
+}
+
+/** Runs the given callback and throws if timeout */
+export async function timeout<T = unknown>(promise: Promise<T>, options: TimeoutOptions) {
+  const error = options.error ?? new Error(`Promise did not resolve after ${options.timeout} milliseconds`)
+  const timeout = new Promise<T>((_, reject) => setTimeout(() => reject(error), options.timeout))
+  const result = await Promise.race([promise, timeout])
+  return result as T
+}

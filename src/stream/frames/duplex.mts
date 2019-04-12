@@ -1,3 +1,5 @@
+/*--------------------------------------------------------------------------
+
 @sinclair/smoke
 
 The MIT License (MIT)
@@ -21,3 +23,36 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
+
+---------------------------------------------------------------------------*/
+
+import { FrameReader } from './reader.mjs'
+import { FrameWriter } from './writer.mjs'
+import { Read } from '../read.mjs'
+import { Write } from '../write.mjs'
+
+export class FrameDuplex implements Read<Uint8Array>, Write<Uint8Array> {
+  readonly #reader: FrameReader
+  readonly #writer: FrameWriter
+  constructor(duplex: Read<Uint8Array> & Write<Uint8Array>) {
+    this.#reader = new FrameReader(duplex)
+    this.#writer = new FrameWriter(duplex)
+  }
+  public async *[Symbol.asyncIterator](): AsyncIterableIterator<Uint8Array> {
+    while (true) {
+      const next = await this.read()
+      if (next === null) return
+      yield next
+    }
+  }
+  public async read(): Promise<Uint8Array | null> {
+    return await this.#reader.read()
+  }
+  public async write(value: Uint8Array): Promise<void> {
+    return await this.#writer.write(value)
+  }
+  public async close() {
+    await this.#writer.close()
+    await this.#reader.close()
+  }
+}

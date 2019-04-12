@@ -1,3 +1,5 @@
+/*--------------------------------------------------------------------------
+
 @sinclair/smoke
 
 The MIT License (MIT)
@@ -21,3 +23,30 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
+
+---------------------------------------------------------------------------*/
+
+import * as Dispose from '../../dispose/index.mjs'
+import { WebRtcPeer } from '../webrtc.mjs'
+
+export type WebRtcDataChannelListenerAcceptCallback = (peer: WebRtcPeer, datachannel: RTCDataChannel) => void
+export type WebRtcDataChannelListenerDisposeCallback = () => void
+
+export class WebRtcDataChannelListener implements Dispose.Dispose {
+  readonly #accept: WebRtcDataChannelListenerAcceptCallback
+  readonly #dispose: WebRtcDataChannelListenerDisposeCallback
+  constructor(onAccept: WebRtcDataChannelListenerAcceptCallback, onDispose: WebRtcDataChannelListenerDisposeCallback) {
+    this.#accept = onAccept
+    this.#dispose = onDispose
+  }
+  public accept(peer: WebRtcPeer, datachannel: RTCDataChannel) {
+    this.#accept(peer, datachannel)
+  }
+  [Symbol.dispose]() {
+    this.dispose()
+  }
+  /** Disposes of this Listener */
+  public dispose() {
+    this.#dispose()
+  }
+}

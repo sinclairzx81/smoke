@@ -1,3 +1,5 @@
+/*--------------------------------------------------------------------------
+
 @sinclair/smoke
 
 The MIT License (MIT)
@@ -21,3 +23,42 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
+
+---------------------------------------------------------------------------*/
+
+import { Deferred } from './deferred.mjs'
+import { Lock } from './lock.mjs'
+
+export interface SemaphoreOptions {
+  concurrency: number
+}
+export class Semaphore {
+  #queue: Array<Deferred<Lock>>
+  #concurrency: number
+  #running: number
+  constructor(options: SemaphoreOptions) {
+    this.#concurrency = options.concurrency
+    this.#running = 0
+    this.#queue = []
+  }
+  /** Acquires semaphore lock */
+  public async lock(): Promise<Lock> {
+    const deferred = new Deferred<Lock>()
+    this.#queue.push(deferred)
+    this.#dispatch()
+    return deferred.promise()
+  }
+  #condition() {
+    return this.#running < this.#concurrency && this.#queue.length > 0
+  }
+  #dispatch() {
+    if (!this.#condition()) return
+    this.#running += 1
+    const next = this.#queue.shift()!
+    const lock = new Lock(() => {
+      this.#running -= 1
+      this.#dispatch()
+    })
+    next.resolve(lock)
+  }
+}

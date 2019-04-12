@@ -1,36 +1,29 @@
 {
-  "name": "smoke",
-  "version": "1.0.0",
-  "description": "Run web and network application servers from within web browsers.",
-  "main": "tasks.js",
+  "name": "@sinclair/smoke",
+  "version": "0.8.0",
+  "description": "Run Micro Services in Web Browsers over WebRTC",
+  "type": "module",
+  "main": "index.mjs",
   "scripts": {
-    "clean": "smoke-task clean",
-    "bench": "smoke-task bench",
-    "webpack": "smoke-task webpack",
-    "test": "smoke-task test",
-    "pack": "smoke-task pack",
-    "doc": "smoke-task doc"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/sinclairzx81/smoke.git"
+    "start": "hammer task start",
+    "drift": "hammer task drift",
+    "format": "hammer task format",
+    "clean": "hammer task clean",
+    "test": "hammer task test",
+    "build": "hammer task build",
+    "publish": "hammer task publish"
   },
   "keywords": [
-    "smoke",
-    "node",
     "webrtc",
-    "indexedb",
-    "gpgpu"
+    "http",
+    "websocket"
   ],
-  "author": "sinclairzx81",
+  "author": "sinclair",
   "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/sinclairzx81/smoke/issues"
-  },
-  "homepage": "https://github.com/sinclairzx81/smoke#readme",
   "devDependencies": {
-    "smoke-pack": "^0.8.0",
-    "smoke-task": "^1.0.5"
-  },
-  "dependencies": {}
+    "@sinclair/drift": "^0.9.0",
+    "@sinclair/hammer": "^0.18.0",
+    "prettier": "^3.2.5",
+    "typescript": "^5.4.3"
+  }
 }

@@ -1,3 +1,5 @@
+/*--------------------------------------------------------------------------
+
 @sinclair/smoke
 
 The MIT License (MIT)
@@ -21,3 +23,17 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
+
+---------------------------------------------------------------------------*/
+
+export type OsType = 'win32' | 'linux' | 'darwin' | 'unknown'
+
+/** Returns the operating system type */
+export function type(): OsType {
+  const userAgent = globalThis.navigator.userAgent.toLowerCase()
+  // prettier-ignore
+  return userAgent.includes('windows') ? 'win32' : 
+         userAgent.includes('linux') ? 'linux' : 
+         userAgent.includes('darwin') ? 'darwin' : 
+         'unknown'
+}

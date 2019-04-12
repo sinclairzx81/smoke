@@ -1,3 +1,5 @@
+/*--------------------------------------------------------------------------
+
 @sinclair/smoke
 
 The MIT License (MIT)
@@ -21,3 +23,26 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
+
+---------------------------------------------------------------------------*/
+
+import * as IndexedDb from '../indexeddb/index.mjs'
+import { FileSystem } from './filesystem.mjs'
+
+/** Deletes a FileSystem with the given databaseName */
+export async function remove(databaseName: string): Promise<void> {
+  await IndexedDb.Factory.deleteDatabase(databaseName)
+}
+/** Opens a FileSystem using the given IndexedDB database name */
+export async function open(databaseName: string): Promise<FileSystem> {
+  return new FileSystem(
+    await IndexedDb.Factory.open(databaseName, (database) => {
+      const folderStore = database.createObjectStore('folder', { keyPath: 'path' })
+      const fileStore = database.createObjectStore('file', { keyPath: 'path' })
+      const blobStore = database.createObjectStore('blob', { autoIncrement: true })
+      folderStore.createIndex('parent', 'parent')
+      fileStore.createIndex('parent', 'parent')
+      blobStore.createIndex('parent', 'parent')
+    }),
+  )
+}

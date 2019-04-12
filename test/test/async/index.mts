@@ -1,3 +1,5 @@
+/*--------------------------------------------------------------------------
+
 @sinclair/smoke
 
 The MIT License (MIT)
@@ -21,3 +23,15 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
+
+---------------------------------------------------------------------------*/
+
+export * from './barrier.mjs'
+export * from './debounce.mjs'
+export * from './deferred.mjs'
+export * from './delay.mjs'
+export * from './lock.mjs'
+export * from './mutex.mjs'
+export * from './semaphore.mjs'
+export * from './timeout.mjs'
+export * from './retry.mjs'
