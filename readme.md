@@ -157,7 +157,7 @@ socket.on('message', message => {
 Nodes house several APIs that allow them to function as network application servers. Many of the APIs provided by this library are based on NodeJS core and community modules that have been rebuilt from the ground up to operate over WebRTC. The following sections provide a high level overview of the APIs available on each Node instance.
 
 ```typescript
-const { system, network, hub, sockets, rest, media, database, fs } = new Node()
+const { system, network, hub, sockets, rest, media } = new Node()
 
 ```
 
