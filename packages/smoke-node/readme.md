@@ -1,8 +1,8 @@
 <p align="center">
-  <img src="https://github.com/sinclairzx81/smoke/blob/master/docs/logo.png">
+  <img src="https://raw.githubusercontent.com/sinclairzx81/smoke/master/docs/logo.png">
 </p>
 
-[![Build Status](https://travis-ci.org/sinclairzx81/smoke.svg?branch=master)](https://travis-ci.org/sinclairzx81/smoke)
+[![NPM package](https://badge.fury.io/js/smoke-node.svg)](https://www.npmjs.com/package/smoke-node) [![Build Status](https://travis-ci.org/sinclairzx81/smoke.svg?branch=master)](https://travis-ci.org/sinclairzx81/smoke)
 
 ---
 
@@ -66,7 +66,7 @@ Released under MIT
 A Hub is the name given to Smoke's WebRTC signalling infrastructure. It is a forwarding channel that Nodes use to relay messages to other Nodes (primarily WebRTC SDP and Candidate exchange messages). A Hub can loosely be thought of as a network Router or sorts. All Nodes connect to at least one Hub, and by doing so, the Node will be joining a network of other Nodes also connected to that Hub.
 
 <p align="center">
-  <img src="https://github.com/sinclairzx81/smoke/blob/master/docs/hub.png">
+  <img src="https://raw.githubusercontent.com/sinclairzx81/smoke/master/docs/hub.png">
 </p>
 
 Smoke Hubs provide the following functionality:
@@ -117,7 +117,7 @@ const node = new Node({ hub: new NetworkHub('ws://localhost:5000') })
 A Node can be thought of as a process running somewhere on the network. All Nodes have network addresses (provided by their Hub), and each may expose zero or more ports to the network. Services are bound to ports in much the same way network servers bind to ports to receive connections.
 
 <p align="center">
-  <img src="https://github.com/sinclairzx81/smoke/blob/master/docs/node.png">
+  <img src="https://raw.githubusercontent.com/sinclairzx81/smoke/master/docs/node.png">
 </p>
 
 New Nodes can be created by calling the `Node` constructor. The following code creates 3 Nodes to match the network above, and makes a socket connection from `node2` to `node3`.
