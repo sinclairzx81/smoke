@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+    "strict": true,
+    "module": "commonjs",
+    "target": "esnext",
+    "moduleResolution": "node",
+    "removeComments": false,
+    "lib": ["dom", "esnext"],
+  },
+  "include": [
+    "fs/path.ts"
+  ],
+  "files": [
+    "index.ts"
+  ]
+}

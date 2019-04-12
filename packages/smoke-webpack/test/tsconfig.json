@@ -1,0 +1,12 @@
+{
+  "compilerOptions": {
+    "sourceMap": true,
+    "noImplicitAny": true,
+    "module": "commonjs",
+    "target": "esnext",
+    "lib": ["dom", "esnext"]
+  },
+  "include": [
+    "./index.ts"
+  ]
+}

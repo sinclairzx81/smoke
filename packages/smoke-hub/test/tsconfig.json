@@ -1,0 +1,13 @@
+{
+  "compilerOptions": {
+    "strict": true,
+    "module": "commonjs",
+    "target": "esnext",
+    "moduleResolution": "node",
+    "removeComments": true,
+    "lib": ["dom", "esnext"],
+  },
+  "files": [
+    "index.ts"
+  ]
+}

@@ -1,0 +1,36 @@
+{
+  "name": "smoke",
+  "version": "1.0.0",
+  "description": "Run web and network application servers from within web browsers.",
+  "main": "tasks.js",
+  "scripts": {
+    "clean": "smoke-task clean",
+    "bench": "smoke-task bench",
+    "webpack": "smoke-task webpack",
+    "test": "smoke-task test",
+    "pack": "smoke-task pack",
+    "doc": "smoke-task doc"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sinclairzx81/smoke.git"
+  },
+  "keywords": [
+    "smoke",
+    "node",
+    "webrtc",
+    "indexedb",
+    "gpgpu"
+  ],
+  "author": "sinclairzx81",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/sinclairzx81/smoke/issues"
+  },
+  "homepage": "https://github.com/sinclairzx81/smoke#readme",
+  "devDependencies": {
+    "smoke-pack": "^0.8.0",
+    "smoke-task": "^1.0.5"
+  },
+  "dependencies": {}
+}

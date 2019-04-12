@@ -1,0 +1,40 @@
+{
+  "name": "smoke-hub",
+  "version": "1.0.0",
+  "license": "MIT",
+  "description": "A description of this project.",
+  "author": "user",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/user/smoke-hub"
+  },
+  "scripts": {
+    "clean": "smoke-task clean",
+    "build": "smoke-task build",
+    "watch": "smoke-task watch",
+    "start": "smoke-task start",
+    "test": "smoke-task test",
+    "pack": "smoke-task pack",
+    "install-cli": "smoke-task install_cli"
+  },
+  "bin": {
+    "smoke-hub": "start.js"
+  },
+  "preferGlobal": true,
+  "devDependencies": {
+    "@types/chai": "^4.1.7",
+    "@types/mocha": "^5.2.5",
+    "@types/node": "^8.0.7",
+    "@types/ws": "^6.0.1",
+    "chai": "^4.2.0",
+    "mocha": "^5.2.0",
+    "shx": "^0.2.2",
+    "smoke-run": "^1.0.2",
+    "smoke-task": "^1.0.5",
+    "typescript": "^3.2.4",
+    "typescript-bundle": "^1.0.7"
+  },
+  "dependencies": {
+    "ws": "^6.1.2"
+  }
+}
