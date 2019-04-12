@@ -1,4 +1,6 @@
-![logo](./../../docs/Logo.png)
+<p align="center">
+  <img src="https://github.com/sinclairzx81/smoke/blob/master/docs/logo.png">
+</p>
 
 # Smoke-Hub
 

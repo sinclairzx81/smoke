@@ -1,3 +1,6 @@
+addons:
+  firefox: "65.0"
+  chrome: "72.0"
 language: node_js
 node_js:
   - "10"
