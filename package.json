@@ -6,9 +6,9 @@
   "scripts": {
     "clean": "smoke-task clean",
     "bench": "smoke-task bench",
-    "webpack": "smoke-task webpack",
     "test": "smoke-task test",
-    "pack": "smoke-task pack",
+    "pack-node": "smoke-pack pack smoke-node",
+    "pack-hub": "smoke-pack pack smoke-hub",
     "doc": "smoke-task doc"
   },
   "repository": {
@@ -29,8 +29,9 @@
   },
   "homepage": "https://github.com/sinclairzx81/smoke#readme",
   "devDependencies": {
+    "shx": "^0.3.2",
     "smoke-pack": "^0.8.0",
-    "smoke-task": "^1.0.5"
+    "smoke-task": "^1.0.7"
   },
   "dependencies": {}
 }

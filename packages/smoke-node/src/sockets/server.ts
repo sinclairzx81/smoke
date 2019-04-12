@@ -26,8 +26,8 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-import { Network, Peer } from '../network'
 import { Socket }        from './socket'
+import { Network, Peer } from '../network'
 
 /** The socket listen function to receive incoming sockets. */
 export type SocketListenFunction = (socket: Socket) => void

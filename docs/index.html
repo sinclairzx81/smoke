@@ -1,0 +1,809 @@
+<!doctype html>
+<html class="default no-js">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>smoke-node</title>
+	<meta name="description" content="">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="assets/css/main.css">
+</head>
+<body>
+<header>
+	<div class="tsd-page-toolbar">
+		<div class="container">
+			<div class="table-wrap">
+				<div class="table-cell" id="tsd-search" data-index="assets/js/search.js" data-base=".">
+					<div class="field">
+						<label for="tsd-search-field" class="tsd-widget search no-caption">Search</label>
+						<input id="tsd-search-field" type="text" />
+					</div>
+					<ul class="results">
+						<li class="state loading">Preparing search index...</li>
+						<li class="state failure">The search index is not available</li>
+					</ul>
+					<a href="index.html" class="title">smoke-node</a>
+				</div>
+				<div class="table-cell" id="tsd-widgets">
+					<div id="tsd-filter">
+						<a href="#" class="tsd-widget options no-caption" data-toggle="options">Options</a>
+						<div class="tsd-filter-group">
+							<div class="tsd-select" id="tsd-filter-visibility">
+								<span class="tsd-select-label">All</span>
+								<ul class="tsd-select-list">
+									<li data-value="public">Public</li>
+									<li data-value="protected">Public/Protected</li>
+									<li data-value="private" class="selected">All</li>
+								</ul>
+							</div>
+							<input type="checkbox" id="tsd-filter-inherited" checked />
+							<label class="tsd-widget" for="tsd-filter-inherited">Inherited</label>
+							<input type="checkbox" id="tsd-filter-externals" checked />
+							<label class="tsd-widget" for="tsd-filter-externals">Externals</label>
+							<input type="checkbox" id="tsd-filter-only-exported" />
+							<label class="tsd-widget" for="tsd-filter-only-exported">Only exported</label>
+						</div>
+					</div>
+					<a href="#" class="tsd-widget menu no-caption" data-toggle="menu">Menu</a>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="tsd-page-title">
+		<div class="container">
+			<ul class="tsd-breadcrumb">
+				<li>
+					<a href="globals.html">Globals</a>
+				</li>
+			</ul>
+			<h1> smoke-node</h1>
+		</div>
+	</div>
+</header>
+<div class="container container-main">
+	<div class="row">
+		<div class="col-8 col-content">
+			<div class="tsd-panel tsd-typography">
+				<p align="center">
+					<img src="https://raw.githubusercontent.com/sinclairzx81/smoke/master/docs/logo.png">
+				</p>
+				<p><a href="https://www.npmjs.com/package/smoke-node"><img src="https://badge.fury.io/js/smoke-node.svg" alt="NPM package"></a> <a href="https://travis-ci.org/sinclairzx81/smoke"><img src="https://travis-ci.org/sinclairzx81/smoke.svg?branch=master" alt="Build Status"></a></p>
+				<hr>
+				<h1 id="smoke">Smoke</h1>
+				<p>A framework for building Web Server applications in the browser over WebRTC.</p>
+				<pre><code>$ npm install smoke-<span class="hljs-keyword">node</span> <span class="hljs-title">--save</span></code></pre><pre><code class="language-typescript"><span class="hljs-keyword">import</span> { Node } <span class="hljs-keyword">from</span> <span class="hljs-string">'smoke-node'</span>
+
+<span class="hljs-keyword">const</span> node = <span class="hljs-keyword">new</span> Node()
+
+<span class="hljs-keyword">const</span> app = node.rest.createServer()
+
+app.get(<span class="hljs-string">'/'</span>, <span class="hljs-function">(<span class="hljs-params">req, res</span>) =&gt;</span> {
+
+  res.send(<span class="hljs-string">'hello world'</span>)
+})
+
+app.listen(<span class="hljs-number">80</span>)</code></pre>
+				<pre><code class="language-typescript"><span class="hljs-keyword">const</span> text = <span class="hljs-keyword">await</span> node.rest.fetch(<span class="hljs-string">'/'</span>).then(<span class="hljs-function"><span class="hljs-params">n</span> =&gt;</span> n.text())</code></pre>
+				<p><a name="Overview"></a></p>
+				<h2 id="overview">Overview</h2>
+				<p>Smoke is an experimental peer to peer networking framework that allows Web Browsers to run as lightweight Web Servers that operate over WebRTC. It offers a set of APIs to run both HTTP and Web Socket server like functionality in the browser as well as a set of Web like APIs to consume content hosted in remote browsers.</p>
+				<p>Communication between browsers operates entirely peer to peer with each network Node able to support hundreds of concurrent connections. New server nodes may be deployed when users load web pages, with some potential to scale node infrastructure proportional to the number of users loading pages.</p>
+				<p>Additionally, this library provides two storage mechanisms for persisting object and file data by leveraging IndexedDB. Nodes can host file and data in much the same way as one would with a traditional file or api server, with IndexedDB offering gigabytes of storage at each node.</p>
+				<p>This framework was written primarily as a tool to prototype various peer to peer networking architectures. It aims to offer a baseline for exploring various decentralized and distributed technologies using the network and storage capabilites available in modern browsers.</p>
+				<p>This framework is offered as is to anyone who finds it of use. Built with and tested with Chrome 72, Firefox 65 and Electron 4.0.4.</p>
+				<p>Released under MIT</p>
+				<h2 id="docs">Docs</h2>
+				<ul>
+					<li><a href="https://sinclairzx81.github.io/smoke/index.html">Formal</a></li>
+					<li><a href="#Build">Build</a></li>
+					<li><a href="#Hubs">Hubs</a><ul>
+							<li><a href="#PageHub">PageHub</a></li>
+							<li><a href="#NetworkHub">NetworkHub</a></li>
+						</ul>
+					</li>
+					<li><a href="#Nodes">Nodes</a><ul>
+							<li><a href="#Node-System">System</a></li>
+							<li><a href="#Node-Network">Network</a></li>
+							<li><a href="#Node-Hub">Hub</a></li>
+							<li><a href="#Node-Sockets">Sockets</a></li>
+							<li><a href="#Node-Rest">Rest</a></li>
+							<li><a href="#Node-Media">Media</a></li>
+						</ul>
+					</li>
+					<li><a href="#Files-Data">Files and Data</a><ul>
+							<li><a href="#Database">Database</a></li>
+							<li><a href="#Bucket">Bucket</a></li>
+						</ul>
+					</li>
+					<li><a href="#Examples">Examples</a><ul>
+							<li><a href="#Example1">Sockets and Loopback</a> </li>
+							<li><a href="#Example2">Rest Server and Addresses</a> </li>
+							<li><a href="#Example3">MediaStream and Media Proxy</a> </li>
+							<li><a href="#Example4">Database and Network Query</a> </li>
+						</ul>
+					</li>
+				</ul>
+				<h2 id="build">Build</h2>
+				<p>This repository contains both Node and Hub projects as well as a Workbench project that can be used to test and script around the smoke Node and Hub.</p>
+				<p>To build locally.</p>
+				<pre><code class="language-bash">$ git <span class="hljs-built_in">clone</span> git@github.com:sinclairzx81/smoke.git
+$ <span class="hljs-built_in">cd</span> ./smoke
+$ npm install
+
+<span class="hljs-comment"># start node | hub | workbench in watch mode.</span>
+$ npm run bench </code></pre>
+				<p>This will start the workbench web app running a smoke Node. The workbench is accessible on <code>http://localhost:5000</code> and the Hub signalling server is accessible on <code>http://localhost:5001</code>.</p>
+				<p><a name="Hubs"></a></p>
+				<h2 id="hubs">Hubs</h2>
+				<p>A Hub is the name given to Smoke&#39;s WebRTC signalling infrastructure. It is a forwarding channel that Nodes use to relay messages to other Nodes (primarily WebRTC SDP and Candidate exchange messages). A Hub can loosely be thought of as a network Router or sorts. All Nodes connect to at least one Hub, and by doing so, the Node will be joining a network of other Nodes also connected to that Hub.</p>
+				<p align="center">
+					<img src="https://raw.githubusercontent.com/sinclairzx81/smoke/master/docs/hub.png">
+				</p>
+				<p>Smoke Hubs provide the following functionality:</p>
+				<ul>
+					<li>They provide ICE configuration for Nodes (STUN / TURN)</li>
+					<li>They provide a each Node a unique address. (DHCP)</li>
+					<li>They provide SDP, ICE Candidate forwarding services for WebRTC (ICE)</li>
+				</ul>
+				<p>From a application standpoint, Hubs are intended to be fairly transparent to applications (in much the same way as one doesn&#39;t usually give much thought to a home router when connecting to devices in a local area network), but they are important; forming the backbone of a peer network and playing a central role in describing the overall topology and partitioning of a network.</p>
+				<p>Smoke provides two built in Hub types:</p>
+				<p><a name="PageHub"></a></p>
+				<h3 id="pagehub">PageHub</h3>
+				<p>A PageHub is an in memory in-page signalling Hub. It allows for multiple Nodes to connect to each other so long as those Nodes all belong to the same page. This is the default Hub used when passing no arguments when creating a Node. It can be used for testing, scripting and general demonstration purposes.</p>
+				<pre><code class="language-typescript"><span class="hljs-keyword">import</span> { Node } <span class="hljs-keyword">from</span> <span class="hljs-string">'smoke-node'</span>
+
+<span class="hljs-keyword">const</span> node = <span class="hljs-keyword">new</span> Node() <span class="hljs-comment">// uses the page hub</span>
+
+node.sockets.createServer(<span class="hljs-function"><span class="hljs-params">socket</span> =&gt;</span> { ... })</code></pre>
+				<p><a name="NetworkHub"></a></p>
+				<h3 id="networkhub">NetworkHub</h3>
+				<p>A NetworkHub provides over the network signalling for Nodes. This is a more traditional signalling service where ICE messages are able to be exchanged over the public networks. This project provides a reference web socket based hub server implementation that can be installed and run with the following.</p>
+				<pre><code><span class="hljs-variable">$ </span>npm install smoke-hub -g
+
+<span class="hljs-variable">$ </span>smoke-hub --port <span class="hljs-number">5000</span></code></pre><p>The following assumes the above hub is started on localhost.</p>
+				<pre><code class="language-typescript"><span class="hljs-keyword">import</span> { Node, NetworkHub } <span class="hljs-keyword">from</span> <span class="hljs-string">'smoke-node'</span>
+
+<span class="hljs-keyword">const</span> node = <span class="hljs-keyword">new</span> Node({ hub: <span class="hljs-keyword">new</span> NetworkHub(<span class="hljs-string">'ws://localhost:5000'</span>) })</code></pre>
+				<blockquote>
+					<p>The <code>PageHub</code> and <code>NetworkHub</code> are both implementations of <code>Hub</code>. Smoke supports implementation of custom Hub types by creating new Hubs that implementation the <code>Hub</code> interface, allowing Hubs to be implemented around existing server infrastructure, or within a peer to peer network itself.</p>
+				</blockquote>
+				<p><a name="Nodes"></a></p>
+				<h2 id="nodes">Nodes</h2>
+				<p>A Node can be thought of as a process running somewhere on the network. All Nodes have network addresses (provided by their Hub), and each may expose zero or more ports to the network. Services are bound to ports in much the same way network servers bind to ports to receive connections.</p>
+				<p align="center">
+					<img src="https://raw.githubusercontent.com/sinclairzx81/smoke/master/docs/node.png">
+				</p>
+				<p>New Nodes can be created by calling the <code>Node</code> constructor. The following code creates 3 Nodes to match the network above, and makes a socket connection from <code>node2</code> to <code>node3</code>.</p>
+				<pre><code class="language-typescript"><span class="hljs-keyword">import</span> { Node } <span class="hljs-keyword">from</span> <span class="hljs-string">'smoke-node'</span>
+
+<span class="hljs-keyword">const</span> node1 = <span class="hljs-keyword">new</span> Node() <span class="hljs-comment">// 0.0.0.1</span>
+<span class="hljs-keyword">const</span> node2 = <span class="hljs-keyword">new</span> Node() <span class="hljs-comment">// 0.0.0.2</span>
+<span class="hljs-keyword">const</span> node3 = <span class="hljs-keyword">new</span> Node() <span class="hljs-comment">// 0.0.0.3</span>
+
+<span class="hljs-comment">// start server on node3 and listen on port 5000</span>
+
+node3.sockets.createServer(<span class="hljs-function"><span class="hljs-params">socket</span> =&gt;</span> {
+
+  socket.send(<span class="hljs-string">'hello'</span>)
+
+  socket.close()
+
+}).listen(<span class="hljs-number">5000</span>)
+
+<span class="hljs-comment">// connect to node2 from node3 server</span>
+
+<span class="hljs-keyword">const</span> socket = node2.sockets.connect(<span class="hljs-string">'0.0.0.3'</span>, <span class="hljs-number">5000</span>)
+
+socket.on(<span class="hljs-string">'message'</span>, <span class="hljs-function"><span class="hljs-params">message</span> =&gt;</span> {
+
+  <span class="hljs-built_in">console</span>.log(message.data)
+})</code></pre>
+				<blockquote>
+					<p>Note that the addresses allocated from the <code>PageHub</code> are predictable and reset to <code>0.0.0.1</code> on page refresh. Each new node entering the network will be <code>0.0.0.[n+1]</code> up to <code>255</code>. Applications should not place any special meaning on these addresses other than them being plain random strings. The scheme used by the <code>PageHub</code> and <code>smoke-hub</code> implementations are for convenience only.</p>
+				</blockquote>
+				<blockquote>
+					<p>Note that Nodes can expose one or more ports. Ports in nodes are inferred from the <code>RTCDataChannel</code> label property. Connection attempts to non open ports on a smoke node result in the immediate closing of that connection.</p>
+				</blockquote>
+				<p><a name="API"></a></p>
+				<h2 id="api">API</h2>
+				<p>Nodes house several APIs that allow them to function as network application servers. Many of the APIs provided by this library are based on NodeJS core and community modules that have been rebuilt from the ground up to operate over WebRTC. The following sections provide a high level overview of the APIs available on each Node instance.</p>
+				<pre><code class="language-typescript"><span class="hljs-keyword">const</span> { system, network, hub, sockets, rest, media } = <span class="hljs-keyword">new</span> Node()
+</code></pre>
+				<p><a name="Node-System"></a></p>
+				<h4 id="system">System</h4>
+				<p>Provides access to this Nodes uptime, network and storage metrics.</p>
+				<p><a name="Node-Network"></a></p>
+				<h4 id="network">Network</h4>
+				<p>Provides access to the lowest levels of the node network stack. Allows for the binding and unbinding of ports, creating and listening for RTCDataChannels and provides direct access to the pool of RTCPeerConnections managed for this node.</p>
+				<p><a name="Node-Hub"></a></p>
+				<h4 id="hub">Hub</h4>
+				<p>Provides access to the signalling hub this node is connected to. Allows one to resolve their address within the signalling network.</p>
+				<p><a name="Node-Sockets"></a></p>
+				<h4 id="sockets">Sockets</h4>
+				<p>Provides an interface to create and connect to socket server endpoints within the peer network. The sockets provided by this API are designed to function as typical Web Sockets. They layer RTCDataChannel to offer predictable network timeout, address resolution and sending and receiving  message payloads that exceed RTCDataChannel limits.</p>
+				<p><a name="Node-Rest"></a></p>
+				<h4 id="rest">Rest</h4>
+				<p>Provides an interface to create and connect to HTTP like endpoints over WebRTC. The RestServer and Fetch APIs implement full request response semantics allowing for the transmission of data using familiar mechanisms used to send and receive data over HTTP. The RestServer also allows for the hosting of MediaStream content.</p>
+				<p><a name="Node-Media"></a></p>
+				<h4 id="media">Media</h4>
+				<p>Provides an interface to create mediastreams from readable byte streams, such as those read from the IDB file system or received over the network. It also provides a test pattern mediastream source that can be used to test pass through without needing to
+				setup stream sources (such as web camera feeds, etc)</p>
+				<p><a name="Files-Data"></a></p>
+				<h2 id="files-and-data">Files and Data</h2>
+				<p>Smoke provides two storage mechanisms for persisting both file and object data in the browser. Both
+				of these mechanisms operate over IndexedDB, with one modelled on data persistense and query (Database), and the other binary file persistence and streaming (Buckets)</p>
+				<p><a name="Database"></a></p>
+				<h3 id="database">Database</h3>
+				<p>A transactional object store over IndexedDB.</p>
+				<pre><code class="language-typescript"><span class="hljs-keyword">import</span> { Database } <span class="hljs-keyword">from</span> <span class="hljs-string">'smoke-node'</span>
+
+<span class="hljs-comment">// creates a new IDB database named 'my-database'</span>
+<span class="hljs-keyword">const</span> database = <span class="hljs-keyword">new</span> Database(<span class="hljs-string">'my-database'</span>)
+
+<span class="hljs-comment">// generates a new key.</span>
+<span class="hljs-keyword">const</span> key = database.key()
+
+<span class="hljs-comment">// stages a record for insertion.</span>
+database.insert(<span class="hljs-string">'my-table'</span>, {
+  key, foo: <span class="hljs-number">1</span>, bar: <span class="hljs-string">'hello'</span> 
+})
+
+<span class="hljs-comment">// commits the record.</span>
+<span class="hljs-keyword">await</span> database.commit()
+
+<span class="hljs-comment">// gets the record via key</span>
+<span class="hljs-keyword">const</span> record = <span class="hljs-keyword">await</span> database.get(<span class="hljs-string">'my-table'</span>, key)
+
+<span class="hljs-comment">// gets the record via idb scan | query.</span>
+<span class="hljs-keyword">const</span> record = <span class="hljs-keyword">await</span> database.query(<span class="hljs-string">'my-table'</span>).where(<span class="hljs-function"><span class="hljs-params">n</span> =&gt;</span> n.key === key).first()</code></pre>
+				<p>The Database type is a transactional object store built over IDB. It manages some of
+					the complexities around working with IDB, offering a simplified interface for reading
+				and writing object records to IDB object stores.</p>
+				<p><a name="Bucket"></a></p>
+				<h3 id="bucket">Bucket</h3>
+				<p>A file persistence store for IndexedDB.</p>
+				<pre><code class="language-typescript">
+<span class="hljs-keyword">import</span> { Bucket, Buffer } <span class="hljs-keyword">from</span> <span class="hljs-string">'smoke-node'</span>
+
+<span class="hljs-comment">// Creates a new IDB database named 'my-bucket'</span>
+<span class="hljs-keyword">const</span> bucket = <span class="hljs-keyword">new</span> Bucket(<span class="hljs-string">'my-bucket'</span>)
+
+<span class="hljs-comment">// Writes some content to 'index.html'.</span>
+<span class="hljs-keyword">await</span> bucket.write(<span class="hljs-string">'index.html'</span>, <span class="hljs-string">`&lt;h1&gt;hello world&lt;/h1&gt;`</span>)
+
+<span class="hljs-comment">// Creates a writable stream and streams content to IDB.</span>
+<span class="hljs-keyword">const</span> writable = bucket.writable(<span class="hljs-string">'source.dat'</span>)
+writable.write(<span class="hljs-string">'hello'</span>)
+writable.write(<span class="hljs-string">'world'</span>)
+writable.close()
+
+<span class="hljs-comment">// Creates a readable for the above.</span>
+<span class="hljs-keyword">const</span> readable = bucket.readable(<span class="hljs-string">'source.dat'</span>)
+<span class="hljs-keyword">for</span> <span class="hljs-keyword">await</span> (<span class="hljs-keyword">const</span> buffer of readable) {
+  <span class="hljs-built_in">console</span>.log(buffer.toString(<span class="hljs-string">'utf8'</span>))
+}
+
+<span class="hljs-comment">// Pipes from 'source.dat' to 'target.dat'</span>
+<span class="hljs-keyword">const</span> readable = bucket.readable(<span class="hljs-string">'source.dat'</span>)
+<span class="hljs-keyword">const</span> writable = bucket.writable(<span class="hljs-string">'target.dat'</span>)
+<span class="hljs-keyword">await</span> readable.pipe(writable)</code></pre>
+				<p>A Bucket is a specialized implementation of the Database type that supports streaming
+					files to and from IDB. It is intended to be a source for file content transmitted over
+					a peer network. The interface of the bucket shares parallels with Amazon S3 in terms of
+					general functionality. Files stored within the bucket are given simple keys, with
+					hierarchical directory trees able to be emulated in much the same way as one
+				would with S3. </p>
+				<h4 id="using-buckets-with-rest">Using Buckets with Rest</h4>
+				<pre><code class="language-typescript"><span class="hljs-keyword">import</span> { Node, Bucket } <span class="hljs-keyword">from</span> <span class="hljs-string">'smoke-node'</span>
+
+<span class="hljs-comment">// Creates a IDB database named 'my-files'</span>
+<span class="hljs-keyword">const</span> bucket = <span class="hljs-keyword">new</span> Bucket(<span class="hljs-string">'my-files'</span>)
+
+<span class="hljs-comment">// Writes this content to 'index.html'</span>
+<span class="hljs-keyword">await</span> bucket.write(<span class="hljs-string">'index.html'</span>, <span class="hljs-string">'&lt;h1&gt;hello&lt;/h1&gt;'</span>)
+
+
+<span class="hljs-comment">// Creates a new network node.</span>
+<span class="hljs-keyword">const</span> node = <span class="hljs-keyword">new</span> Node()
+
+<span class="hljs-comment">// Create a new rest server.</span>
+<span class="hljs-keyword">const</span> app = node.rest.createServer()
+
+<span class="hljs-comment">// Serves the content from the bucket.</span>
+app.get(<span class="hljs-string">'/index.html'</span>, <span class="hljs-function">(<span class="hljs-params">req, res</span>) =&gt;</span> {
+
+  res.readable(bucket.readable(<span class="hljs-string">'index.html'</span>))
+})
+</code></pre>
+				<p><a name="Examples"></a></p>
+				<h2 id="examples">Examples</h2>
+				<p>The following are a few examples of applications that can be implemented with this framework.</p>
+				<p><a name="Example1"></a></p>
+				<h2 id="sockets-and-loopback">Sockets and Loopback</h2>
+				<p>The following code creates a simple socket server and listens on port 7000. It is connected to in a variety of ways.</p>
+				<pre><code class="language-typescript">
+<span class="hljs-keyword">import</span> { Node } <span class="hljs-keyword">from</span> <span class="hljs-string">'smoke-node'</span>
+
+<span class="hljs-keyword">const</span> node0 = <span class="hljs-keyword">new</span> Node() <span class="hljs-comment">// 0.0.0.1</span>
+
+<span class="hljs-keyword">const</span> node1 = <span class="hljs-keyword">new</span> Node() <span class="hljs-comment">// 0.0.0.2</span>
+
+<span class="hljs-comment">// listen 0.0.0.1 on port 7000</span>
+
+node0.sockets.createServer(<span class="hljs-function"><span class="hljs-params">socket</span> =&gt;</span> <span class="hljs-built_in">console</span>.log(<span class="hljs-string">'have socket'</span>)).listen(<span class="hljs-number">7000</span>)
+
+
+<span class="hljs-keyword">const</span> socket0 = node0.sockets.connect(<span class="hljs-string">'localhost'</span>, <span class="hljs-number">7000</span>) <span class="hljs-comment">// ok</span>
+
+<span class="hljs-keyword">const</span> socket1 = node0.sockets.connect(<span class="hljs-string">'0.0.0.1'</span>, <span class="hljs-number">7000</span>)   <span class="hljs-comment">// ok</span>
+
+<span class="hljs-keyword">const</span> socket2 = node1.sockets.connect(<span class="hljs-string">'localhost'</span>, <span class="hljs-number">7000</span>) <span class="hljs-comment">// fail - not localhost</span>
+
+socket2.on(<span class="hljs-string">'error'</span>, <span class="hljs-built_in">console</span>.log)
+
+<span class="hljs-keyword">const</span> socket3 = node1.sockets.connect(<span class="hljs-string">'0.0.0.1'</span>, <span class="hljs-number">7000</span>)   <span class="hljs-comment">// ok</span></code></pre>
+				<p><a name="Example2"></a></p>
+				<h2 id="rest-server-and-addresses">Rest Server and Addresses</h2>
+				<p>The following code demonstrates setting up a node running a rest server. This code
+					sets a <code>host</code> node that runs a small rest server. A seconary node is then created
+				and uses the <code>hosts</code> address to make a <code>fetch</code> request to download content.</p>
+				<pre><code class="language-typescript"><span class="hljs-keyword">import</span> { Node } <span class="hljs-keyword">from</span> <span class="hljs-string">'smoke-node'</span>
+
+(<span class="hljs-keyword">async</span> () =&gt; {
+
+  <span class="hljs-comment">// Server</span>
+
+  <span class="hljs-keyword">const</span> host = <span class="hljs-keyword">new</span> Node({  })
+
+  <span class="hljs-keyword">const</span> app = host.rest.createServer()
+
+  app.get(<span class="hljs-string">'/'</span>, <span class="hljs-keyword">async</span> (req, res) =&gt; {
+
+    res.headers[<span class="hljs-string">'Content-Type'</span>] = <span class="hljs-string">'text/html'</span>
+
+    res.send(<span class="hljs-string">`&lt;h1&gt;hello world&lt;/h1&gt;`</span>)
+  })
+
+  app.listen(<span class="hljs-number">80</span>)
+
+  <span class="hljs-comment">// Client</span>
+
+  <span class="hljs-keyword">const</span> node = <span class="hljs-keyword">new</span> Node({ })
+
+  <span class="hljs-keyword">const</span> response = <span class="hljs-keyword">await</span> node.rest.fetch(<span class="hljs-string">`rest://<span class="hljs-subst">${await host.address()}</span>/`</span>)
+
+  <span class="hljs-keyword">const</span> content = <span class="hljs-keyword">await</span> response.text()
+
+  <span class="hljs-built_in">console</span>.log(content)
+
+}, <span class="hljs-number">1000</span>)
+</code></pre>
+				<p><a name="Example3"></a></p>
+				<h2 id="mediastream-and-media-proxy">MediaStream and Media Proxy</h2>
+				<p>The Rest server offers the ability to stream live media feeds (such as those given by getUserMedia) as Rest responses. In addition, Smoke supports mediastream pass-through / proxy using familiar request / response semantics, leading to mediastream fan-out from a single source.</p>
+				<p>The following code sets up 3 network nodes and pipelines a mediastream in the following way.</p>
+				<pre><code>source &gt; node0 &gt; node1 &gt; node2 &gt; <span class="hljs-selector-tag">video</span> element </code></pre><blockquote>
+					<p>Note, this component of smoke is highly experimental and subject to API changes.</p>
+				</blockquote>
+				<pre><code class="language-typescript"><span class="hljs-keyword">import</span> { Node } <span class="hljs-keyword">from</span> <span class="hljs-string">'smoke-node'</span>
+
+<span class="hljs-keyword">const</span> node0 = <span class="hljs-keyword">new</span> Node() <span class="hljs-comment">// 0.0.0.1</span>
+
+<span class="hljs-keyword">const</span> node1 = <span class="hljs-keyword">new</span> Node() <span class="hljs-comment">// 0.0.0.2</span>
+
+<span class="hljs-keyword">const</span> node2 = <span class="hljs-keyword">new</span> Node() <span class="hljs-comment">// 0.0.0.3</span>
+
+<span class="hljs-comment">// node0 - The video source.</span>
+
+node0.rest.createServer().get(<span class="hljs-string">'/mediastream'</span>, <span class="hljs-function">(<span class="hljs-params">req, res</span>) =&gt;</span> {
+
+  <span class="hljs-keyword">const</span> mediastream = node0.media.createTestPattern()
+
+  res.mediastream(mediastream)
+
+}).listen(<span class="hljs-number">80</span>)
+
+<span class="hljs-comment">// node1 - The video proxy.</span>
+
+<span class="hljs-keyword">const</span> app1 = node1.rest.createServer()
+
+app1.get(<span class="hljs-string">'/mediastream'</span>, <span class="hljs-keyword">async</span> (req, res) =&gt; {
+
+  <span class="hljs-keyword">const</span> response = <span class="hljs-keyword">await</span> node1.rest.fetch(<span class="hljs-string">'rest://0.0.0.1/mediastream'</span>)
+
+  res.mediastream(<span class="hljs-keyword">await</span> response.mediastream())
+
+}).listen(<span class="hljs-number">80</span>)
+
+<span class="hljs-comment">// node2 - the client</span>
+
+;<span class="hljs-function">(<span class="hljs-params"><span class="hljs-keyword">async</span> (<span class="hljs-params"></span>) =&gt; {
+
+  <span class="hljs-keyword">const</span> response = <span class="hljs-keyword">await</span> node2.rest.fetch(<span class="hljs-params">'rest:<span class="hljs-comment">//0.0.0.2/mediastream')</span>
+
+  <span class="hljs-keyword">const</span> video = <span class="hljs-built_in">document</span>.getElementById(<span class="hljs-params">'video-0'</span>) <span class="hljs-keyword">as</span> HTMLVideoElement
+
+  video.srcObject = <span class="hljs-keyword">await</span> response.mediastream(<span class="hljs-params"></span>)
+
+  video.play(<span class="hljs-params"></span>)
+
+}</span>)(<span class="hljs-params"></span>)
+</span></span></code></pre>
+				<p><a name="Example4"></a></p>
+				<h2 id="database-and-network-query">Database and Network Query</h2>
+				<p>The Rest server framework supports streaming record sets directly from IndexedDB out to rest responses. The Rest server may act as a direct database pass-through, or projected with LINQ style queries. Its designed to allow nodes to function as standalone database servers.</p>
+				<p>Record iteration with queries means records are only pulled when the receiver moves &#39;next&#39;. This is handled at a network protocol level and expressed with JavaScript async iterators.</p>
+				<p>The following code writes some database records and serves them on a Rest endpoint. The server filters the results (view logic) which are ordered and projected when received by the client. </p>
+				<pre><code class="language-typescript"><span class="hljs-keyword">import</span> { Node, Record, Database } <span class="hljs-keyword">from</span> <span class="hljs-string">'smoke-node'</span>
+
+(<span class="hljs-keyword">async</span> () =&gt; {
+
+  <span class="hljs-comment">// Use the rest namespace.</span>
+  <span class="hljs-keyword">const</span> { rest } = <span class="hljs-keyword">new</span> Node()
+
+  <span class="hljs-comment">// Creates a IDB database with this name.</span>
+  <span class="hljs-keyword">const</span> db = <span class="hljs-keyword">new</span> Database(<span class="hljs-string">'users'</span>)
+
+  <span class="hljs-comment">// Insert some users into the database.</span>
+  db.insert(<span class="hljs-string">'users'</span>, { 
+    key: db.key(), 
+    name: <span class="hljs-string">'smith'</span>, 
+    role: <span class="hljs-string">'admin'</span> 
+  })
+
+  db.insert(<span class="hljs-string">'users'</span>, { 
+    key: db.key(), 
+    name: <span class="hljs-string">'mike'</span>, 
+    role: <span class="hljs-string">'admin'</span>  
+  })
+
+  db.insert(<span class="hljs-string">'users'</span>, { 
+    key: db.key(), 
+    name: <span class="hljs-string">'dave'</span>, 
+    role: <span class="hljs-string">'user'</span>  
+  })
+
+  db.insert(<span class="hljs-string">'users'</span>, { 
+    key: db.key(), 
+    name: <span class="hljs-string">'jones'</span>, 
+    role: <span class="hljs-string">'user'</span>  
+  })
+
+  <span class="hljs-comment">// Commit users to database.</span>
+  <span class="hljs-keyword">await</span> db.commit()
+
+  <span class="hljs-comment">// Create a Rest server.</span>
+  <span class="hljs-keyword">const</span> app = rest.createServer()
+
+  <span class="hljs-comment">// Setup '/users' route.</span>
+  app.get(<span class="hljs-string">'/users'</span>, <span class="hljs-function">(<span class="hljs-params">req, res</span>) =&gt;</span> {
+
+    <span class="hljs-keyword">const</span> query = db.query(<span class="hljs-string">'users'</span>).where(<span class="hljs-function"><span class="hljs-params">n</span> =&gt;</span> n.role === <span class="hljs-string">'user'</span>)
+
+    res.query(query)
+
+  }).listen(<span class="hljs-number">5433</span>)
+
+
+  <span class="hljs-comment">// Request query from server.</span>
+  <span class="hljs-keyword">const</span> query = <span class="hljs-keyword">await</span> rest.fetch(<span class="hljs-string">'rest://localhost:5433/users'</span>).then(<span class="hljs-function"><span class="hljs-params">n</span> =&gt;</span> n.query&lt;User&gt;())
+
+  <span class="hljs-comment">// Apply order and iterate, new records pulled on each iteration.</span>
+  <span class="hljs-keyword">for</span> <span class="hljs-keyword">await</span> (<span class="hljs-keyword">const</span> user of query.orderBy(<span class="hljs-function"><span class="hljs-params">n</span> =&gt;</span> n.name).select(<span class="hljs-function"><span class="hljs-params">n</span> =&gt;</span> n.name)) {
+
+    <span class="hljs-built_in">console</span>.log(user)
+  }
+
+})();</code></pre>
+			</div>
+		</div>
+		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
+			<nav class="tsd-navigation primary">
+				<ul>
+					<li class="globals  ">
+						<a href="globals.html"><em>Globals</em></a>
+					</li>
+					<li class="label tsd-is-external">
+						<span>Internals</span>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_index_.html">"index"</a>
+					</li>
+					<li class="label tsd-is-external">
+						<span>Externals</span>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="modules/_async_barrier_.html">"async/barrier"</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="modules/_async_events_.html">"async/events"</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="modules/_async_index_.html">"async/index"</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="modules/_async_semaphore_.html">"async/semaphore"</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="modules/_bucket_bucket_.html">"bucket/bucket"</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="modules/_bucket_constants_.html">"bucket/constants"</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="modules/_bucket_errors_.html">"bucket/errors"</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="modules/_bucket_index_.html">"bucket/index"</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="modules/_bucket_reader_.html">"bucket/reader"</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="modules/_bucket_records_.html">"bucket/records"</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="modules/_bucket_writer_.html">"bucket/writer"</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="modules/_buffer_base64_.html">"buffer/base64"</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="modules/_buffer_buffer_.html">"buffer/buffer"</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="modules/_buffer_ieee754_.html">"buffer/ieee754"</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="modules/_buffer_index_.html">"buffer/index"</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="modules/_database_database_.html">"database/database"</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="modules/_database_driver_.html">"database/driver"</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="modules/_database_index_.html">"database/index"</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="modules/_database_key_.html">"database/key"</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="modules/_dispose_.html">"dispose"</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="modules/_hub_hub_.html">"hub/hub"</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="modules/_hub_index_.html">"hub/index"</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="modules/_hub_network_client_.html">"hub/network/client"</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="modules/_hub_network_index_.html">"hub/network/index"</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="modules/_hub_page_client_.html">"hub/page/client"</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="modules/_hub_page_dhcp_.html">"hub/page/dhcp"</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="modules/_hub_page_index_.html">"hub/page/index"</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="modules/_hub_page_server_.html">"hub/page/server"</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="modules/_hub_page_sockets_bus_.html">"hub/page/sockets/bus"</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="modules/_hub_page_sockets_index_.html">"hub/page/sockets/index"</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="modules/_hub_page_sockets_server_.html">"hub/page/sockets/server"</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="modules/_hub_page_sockets_socket_.html">"hub/page/sockets/socket"</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="modules/_media_index_.html">"media/index"</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="modules/_media_media_.html">"media/media"</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="modules/_media_mse_.html">"media/mse"</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="modules/_media_webrtc_.html">"media/webrtc"</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="modules/_network_index_.html">"network/index"</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="modules/_network_network_.html">"network/network"</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="modules/_node_.html">"node"</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="modules/_path_index_.html">"path/index"</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="modules/_path_path_.html">"path/path"</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="modules/_queryable_index_.html">"queryable/index"</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="modules/_queryable_queryable_.html">"queryable/queryable"</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="modules/_querystring_index_.html">"querystring/index"</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="modules/_querystring_querystring_.html">"querystring/querystring"</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="modules/_rest_fetch_fetch_.html">"rest/fetch/fetch"</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="modules/_rest_fetch_index_.html">"rest/fetch/index"</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="modules/_rest_fetch_request_.html">"rest/fetch/request"</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="modules/_rest_fetch_response_.html">"rest/fetch/response"</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="modules/_rest_index_.html">"rest/index"</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="modules/_rest_protocol_body_.html">"rest/protocol/body"</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="modules/_rest_protocol_header_.html">"rest/protocol/header"</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="modules/_rest_protocol_index_.html">"rest/protocol/index"</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="modules/_rest_rest_.html">"rest/rest"</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="modules/_rest_server_index_.html">"rest/server/index"</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="modules/_rest_server_middleware_.html">"rest/server/middleware"</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="modules/_rest_server_pattern_.html">"rest/server/pattern"</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="modules/_rest_server_request_.html">"rest/server/request"</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="modules/_rest_server_response_.html">"rest/server/response"</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="modules/_rest_server_router_.html">"rest/server/router"</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="modules/_rest_server_server_.html">"rest/server/server"</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="modules/_sockets_index_.html">"sockets/index"</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="modules/_sockets_server_.html">"sockets/server"</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="modules/_sockets_socket_.html">"sockets/socket"</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="modules/_sockets_sockets_.html">"sockets/sockets"</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="modules/_sockets_stream_.html">"sockets/stream"</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="modules/_streams_index_.html">"streams/index"</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="modules/_streams_readable_.html">"streams/readable"</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="modules/_streams_writable_.html">"streams/writable"</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="modules/_system_index_.html">"system/index"</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="modules/_system_system_.html">"system/system"</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="modules/_url_index_.html">"url/index"</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="modules/_url_url_.html">"url/url"</a>
+					</li>
+				</ul>
+			</nav>
+			<nav class="tsd-navigation secondary menu-sticky">
+				<ul class="before-current">
+				</ul>
+			</nav>
+		</div>
+	</div>
+</div>
+<footer class="with-border-bottom">
+	<div class="container">
+		<h2>Legend</h2>
+		<div class="tsd-legend-group">
+			<ul class="tsd-legend">
+				<li class="tsd-kind-module"><span class="tsd-kind-icon">Module</span></li>
+				<li class="tsd-kind-object-literal"><span class="tsd-kind-icon">Object literal</span></li>
+				<li class="tsd-kind-variable"><span class="tsd-kind-icon">Variable</span></li>
+				<li class="tsd-kind-function"><span class="tsd-kind-icon">Function</span></li>
+				<li class="tsd-kind-function tsd-has-type-parameter"><span class="tsd-kind-icon">Function with type parameter</span></li>
+				<li class="tsd-kind-index-signature"><span class="tsd-kind-icon">Index signature</span></li>
+				<li class="tsd-kind-type-alias"><span class="tsd-kind-icon">Type alias</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-enum"><span class="tsd-kind-icon">Enumeration</span></li>
+				<li class="tsd-kind-enum-member"><span class="tsd-kind-icon">Enumeration member</span></li>
+				<li class="tsd-kind-property tsd-parent-kind-enum"><span class="tsd-kind-icon">Property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-enum"><span class="tsd-kind-icon">Method</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-interface"><span class="tsd-kind-icon">Interface</span></li>
+				<li class="tsd-kind-interface tsd-has-type-parameter"><span class="tsd-kind-icon">Interface with type parameter</span></li>
+				<li class="tsd-kind-constructor tsd-parent-kind-interface"><span class="tsd-kind-icon">Constructor</span></li>
+				<li class="tsd-kind-property tsd-parent-kind-interface"><span class="tsd-kind-icon">Property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-interface"><span class="tsd-kind-icon">Method</span></li>
+				<li class="tsd-kind-index-signature tsd-parent-kind-interface"><span class="tsd-kind-icon">Index signature</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-class"><span class="tsd-kind-icon">Class</span></li>
+				<li class="tsd-kind-class tsd-has-type-parameter"><span class="tsd-kind-icon">Class with type parameter</span></li>
+				<li class="tsd-kind-constructor tsd-parent-kind-class"><span class="tsd-kind-icon">Constructor</span></li>
+				<li class="tsd-kind-property tsd-parent-kind-class"><span class="tsd-kind-icon">Property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class"><span class="tsd-kind-icon">Method</span></li>
+				<li class="tsd-kind-accessor tsd-parent-kind-class"><span class="tsd-kind-icon">Accessor</span></li>
+				<li class="tsd-kind-index-signature tsd-parent-kind-class"><span class="tsd-kind-icon">Index signature</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-constructor tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited constructor</span></li>
+				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited method</span></li>
+				<li class="tsd-kind-accessor tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited accessor</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-protected"><span class="tsd-kind-icon">Protected property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-protected"><span class="tsd-kind-icon">Protected method</span></li>
+				<li class="tsd-kind-accessor tsd-parent-kind-class tsd-is-protected"><span class="tsd-kind-icon">Protected accessor</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private method</span></li>
+				<li class="tsd-kind-accessor tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private accessor</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-static"><span class="tsd-kind-icon">Static property</span></li>
+				<li class="tsd-kind-call-signature tsd-parent-kind-class tsd-is-static"><span class="tsd-kind-icon">Static method</span></li>
+			</ul>
+		</div>
+	</div>
+</footer>
+<div class="container tsd-generator">
+	<p>Generated using <a href="http://typedoc.org/" target="_blank">TypeDoc</a></p>
+</div>
+<div class="overlay"></div>
+<script src="assets/js/main.js"></script>
+<script>if (location.protocol == 'file:') document.write('<script src="assets/js/search.js"><' + '/script>');</script>
+</body>
+</html>

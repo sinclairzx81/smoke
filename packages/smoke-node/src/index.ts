@@ -32,7 +32,7 @@ THE SOFTWARE.
 //
 // -----------------------------------------------------------------------------
 
-export { Barrier, Deferred, Events, EventHandler, Semaphore } from './async'
+export { Barrier, Events, EventHandler, Semaphore } from './async'
 
 // -----------------------------------------------------------------------------
 //
@@ -52,7 +52,7 @@ export { Url } from './url'
 //
 // -----------------------------------------------------------------------------
 
-export { Buffer } from './buffer'
+export { Buffer, Encoding } from './buffer'
 
 export { Readable,  Writable } from './streams'
 
@@ -73,6 +73,14 @@ export { System, NetStat } from './system'
 // -----------------------------------------------------------------------------
 
 export { Database, Record } from './database'
+
+// -----------------------------------------------------------------------------
+//
+// Bucket
+//
+// -----------------------------------------------------------------------------
+
+export { Bucket, FileInfo } from './bucket'
 
 // -----------------------------------------------------------------------------
 //

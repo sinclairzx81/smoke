@@ -1,17 +1,18 @@
 node_modules
+build
+
+# workbench
+packages/bench/package-lock.json
+packages/bench/node_modules
+packages/bench/public
 
 # smoke-node
+packages/smoke-node/package-lock.json
 packages/smoke-node/node_modules
 packages/smoke-node/public
 
-# smoke-bench
-packages/smoke-bench/node_modules
-packages/smoke-bench/public
-
-# smoke-tools
+# smoke-hub
+packages/smoke-hub/package-lock.json
 packages/smoke-hub/node_modules
 packages/smoke-hub/public
 
-# smoke-webpack
-packages/smoke-webpack/node_modules
-packages/smoke-webpack/public

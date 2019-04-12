@@ -26,4 +26,4 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-export { System, FsStat, NetStat } from './system'
+export { System, NetStat } from './system'

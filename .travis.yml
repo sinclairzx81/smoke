@@ -1,0 +1,8 @@
+addons:
+  firefox: "66.0.2"
+  chrome: stable
+language: node_js
+node_js:
+  - "10"
+before_script:
+  - npm install

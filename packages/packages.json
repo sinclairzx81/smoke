@@ -1,7 +1,7 @@
 {
   "smoke-hub": [],
   "smoke-node": [],
-  "smoke-webpack": [
+  "bench": [
     "smoke-node"
   ]
 }

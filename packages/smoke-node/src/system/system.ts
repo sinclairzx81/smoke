@@ -26,7 +26,6 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-import { Database }      from '../database'
 import { Network, Peer } from '../network'
 
 /**
@@ -45,20 +44,6 @@ export interface NetStat {
   loopback:      any
   /** Additional information given by RTCPeerConnection getStats(). */
   [key: string]: any
-}
-
-/**
- * The File System stat object.
- */
-export interface FsStat {
-  /** The number of folders managed by this file system */
-  folders: number
-  /** The number of files managed by this file system. */
-  files:   number
-  /** The number of blob records managed by this file system. */
-  blobs:   number
-  /** The file system storage estimate given by the QuoteAPI (if available) */
-  estimate: StorageEstimate | null
 }
 
 /**

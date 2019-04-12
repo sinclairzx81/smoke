@@ -26,15 +26,15 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-import { Server } from './hub/index'
+import { Hub } from './hub'
+import { Cli } from './cli'
 
-const server = new Server({
-  iceServers: [
-    { urls: 'stun:stun1.l.google.com:19302' },
-    { urls: 'stun:stun2.l.google.com:19302' }
-  ]
+const options = Cli.parse(process.argv)
+const server  = new Hub(options.config, (...args: any[]) => {
+  if(options.trace) {
+    console.log(args)
+  }
 })
+server.listen(options.port)
 
-server.listen(5001)
-
-console.log('smoke-hub: listening on port 5001')
+console.log(`smoke-hub: listening on port ${options.port}`)

@@ -4,7 +4,6 @@ smoke-node
 
 The MIT License (MIT)
 
-Copyright (C) 2013 Bjørge Næss - https://github.com/bjoerge/route-pattern
 Copyright (c) 2019 Haydn Paterson (sinclair) <haydn.developer@gmail.com>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -34,8 +33,6 @@ import { runStack, asMiddleware, Middleware, MiddlewareLike } from './middleware
 import { RestRequest }  from './request'
 import { RestResponse } from './response'
 import { Pattern }      from './pattern'
-
-
 
 
 /** The route handler function. */
