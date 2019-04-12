@@ -1,394 +1,394 @@
-<p align="center">
-  <img src="https://github.com/sinclairzx81/smoke/blob/master/docs/logo.png">
-</p>
+<div align='center'>
 
----
+<h1>Smoke</h1>
 
-# Smoke
+<p>Run Web Servers in Web Browsers over WebRTC</p>
 
-A framework for building WebRTC network services.
+<img src="https://github.com/sinclairzx81/smoke/blob/master/smoke.png?raw=true" />
 
-```
-$ npm install smoke-node --save
-```
+<br />
+<br />
+
+[![Test](https://github.com/sinclairzx81/smoke/actions/workflows/test.yml/badge.svg)](https://github.com/sinclairzx81/smoke/actions/workflows/test.yml) [![npm version](https://badge.fury.io/js/%40sinclair%2Fsmoke.svg)](https://badge.fury.io/js/%40sinclair%2Fsmoke) [![License](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
+</div>
+
+## Example
+
+Smoke allows browsers to run web server applications over WebRTC
+
 ```typescript
-import { Node } from 'smoke-node'
+import { Network } from '@sinclair/smoke'
 
-const node = new Node()
+// ------------------------------------------------------------------
+//
+// Create a Virtual Network
+//
+// ------------------------------------------------------------------
 
-const app = node.rest.createServer()
+const { Http } = new Network()
 
-app.get('/', (req, res) => {
+// ------------------------------------------------------------------
+//
+// Create a Http Listener on a Port
+//
+// ------------------------------------------------------------------
 
-  res.send('hello world')
-})
+Http.listen({ port: 5000 }, request => new Response('hello webrtc'))
 
-app.listen(80)
+// ------------------------------------------------------------------
+//
+// Fetch data over WebRTC
+//
+// ------------------------------------------------------------------
+
+const text = Http.fetch('http://localhost:5000').then(r => r.text())
 ```
-```typescript
-const text = await node.rest.fetch('/').then(n => n.text())
+
+## Install
+
+```bash
+$ npm install @sinclair/smoke
 ```
 
-<a name="Overview"></a>
 ## Overview
 
-Smoke is an experimental peer to peer networking library that allows web browsers to run as WebRTC network hosts. This library allows one to run Web Socket and HTTP applications from inside Web Pages. Communication between browsers operates entirely peer to peer with each network Node able to support a upwards of 256 concurrent connections each. Nodes can be thought of as micro web service hosts run by users on page load.
+Smoke is an experimental networking and storage framework for the browser that provides Http, Tcp and WebSocket emulation over WebRTC and large file storage via IndexedDB. It is built as a foundation for developing peer to peer services in the browser with each browser accessible via an application controlled virtual network.
 
-This framework was written primarily as a tool to prototype various peer to peer networking architectures. It allows for the rapid creation of fairly sophisticated peer to peer network systems in just a few lines of code. It is offered as is to anyone who finds it of any use.
+Smoke reshapes WebRTC into WinterCG compatible interfaces enabling traditional web server applications to be made portable between server and browser environments. It is developed in support of alternative software architectures where user centric services can be moved away from the cloud and run peer to peer in the browser.
 
-Built with and tested with Chrome 72, Firefox 65 and Electron 4.0.4.
+Licence MIT
 
-Released under MIT
+## Contents
 
-## Docs
+- [Network](#Network)
+  - [Private](#Network-Private)
+  - [Public](#Network-Public)
+- [Http](#Http)
+  - [Listen](#Http-Listen)
+  - [Fetch](#Http-Fetch)
+  - [Upgrade](#Http-Upgrade)
+  - [Connect](#Http-Connect)
+- [Net](#Net)
+  - [Listen](#Net-Listen)
+  - [Connect](#Net-Connect)
+- [Media](#Media)
+  - [Listen](#Media-Listen)
+  - [Send](#Media-Send)
+  - [Audio](#Media-Audio)
+  - [Video](#Media-Video)
+  - [Pattern](#Media-Pattern)
+- [FileSystem](#FileSystem)
+  - [Open](#FileSystem-Open)
+  - [Stat](#FileSystem-Stat)
+  - [Exists](#FileSystem-Exists)
+  - [MkDir](#FileSystem-Mkdir)
+  - [ReadDir](#FileSystem-ReadDir)
+  - [Blob](#FileYstem-Blob)
+  - [Read](#FileSystem-Read)
+  - [Write](#FileSystem-Write)
+  - [Delete](#FileSystem-Delete)
+- [Contribute](#Contribute)
 
-- [Hubs](#Hubs)
-  - [PageHub](#PageHub)
-  - [NetworkHub](#NetworkHub)
-- [Nodes](#Nodes)
-  - [System](#Node-System)
-  - [Network](#Node-Network)
-  - [Hub](#Node-Hub)
-  - [Sockets](#Node-Sockets)
-  - [Rest](#Node-Rest)
-  - [Media](#Node-Media)
-- [Examples](#Examples)
-  - [Sockets and Loopback](#Example1) 
-  - [Rest Server and Hostnames](#Example2) 
-  - [MediaStream and Media Proxy](#Example3) 
-  - [Database and Network Query](#Example4) 
 
-<a name="Hubs"></a>
-## Hubs
 
-A Hub is the name given to Smoke's WebRTC signalling infrastructure. It is a forwarding channel that Nodes use to relay messages to other Nodes (primarily WebRTC SDP and Candidate exchange messages). A Hub can loosely be thought of as a network Router or sorts. All Nodes connect to at least one Hub, and by doing so, the Node will be joining a network of other Nodes also connected to that Hub.
+<a name="Network"></a>
+## Network
 
-<p align="center">
-  <img src="https://github.com/sinclairzx81/smoke/blob/master/docs/hub.png">
-</p>
-
-Smoke Hubs provide the following functionality:
-
-- They provide ICE configuration for Nodes (STUN / TURN)
-- They provide SDP, ICE Candidate forwarding services for WebRTC (ICE)
-- They provide a each Node a unique address. (DHCP)
-- They provide a means for a Node to register a public hostname (DNS)
-
-From a application standpoint, Hubs are intended to be fairly transparent to applications (in much the same way as one doesn't usually give much thought to a home router when connecting to devices in a local area network), but they are important; forming the backbone of a peer network and playing a central role in describing the overall topology and partitioning of a network.
-
-Smoke provides two built in Hub types:
-
-<a name="PageHub"></a>
-### PageHub
-
-A PageHub is an in memory in-page signalling Hub. It allows for multiple Nodes to connect to each other so long as those Nodes all belong to the same page. This is the default Hub used when passing no arguments when creating a Node. It can be used for testing, scripting and general demonstration purposes.
+Smoke networking API's are provided by way of Network objects. A Network object represents an active connection to a shared signalling Hub and exposes the Http, Net and Media functionality used to communicate with other Network objects connected to the same Hub.
 
 ```typescript
-import { Node } from 'smoke-node'
+import { Network, Hubs } from '@sinclair/smoke'
 
-const node = new Node() // uses the page hub
+const { Http, Net, Media, Hub } = new Network({ hub: new Hubs.Private() })
 
-node.sockets.createServer(socket => { ... })
+const address = await Hub.address() // The address of this Network object.
 ```
 
-<a name="NetworkHub"></a>
-### NetworkHub 
+<a name="Network-Private"></a>
+### Private
 
-A NetworkHub provides over the network signalling for Nodes. This is a more traditional signalling service where ICE messages are able to be exchanged over the public networks. This project provides a reference web socket based hub server implementation that can be installed and run with the following.
-```
-$ npm install smoke-hub -g
-
-$ smoke-hub --port 5000
-```
-The following assumes the above hub is started on localhost.
+A Private hub is an in-memory relay that forwards WebRTC ICE messages by way of the browser's BroadcastChannel API. A private hub can only relay messages to the page and other tabs running within the same browser process. Because private hubs cannot facilitate connections made outside the current page, it is considered private. This Hub is the default.
 
 ```typescript
-import { Node, NetworkHub } from 'smoke-node'
+import { Network, Hubs } from '@sinclair/smoke'
 
-const node = new Node({ hub: new NetworkHub('ws://localhost:5000') })
+const { Http } = new Network({ hub: new Hubs.Private() })
+
 ```
-> The `PageHub` and `NetworkHub` are both implementations of `Hub`. Smoke supports implementation of custom Hub types by creating new Hubs that implementation the `Hub` interface, allowing Hubs to be implemented around existing server infrastructure, or within a peer to peer network itself.
 
-<a name="Nodes"></a>
-## Nodes
+<a name="Network-Public"></a>
+### Public 
 
-A Node can be thought of as a process running somewhere on the network. All Nodes have network addresses (provided by their Hub), and each may expose zero or more ports to the network. Services are bound to ports in much the same way network servers bind to ports to receive connections.
-
-<p align="center">
-  <img src="https://github.com/sinclairzx81/smoke/blob/master/docs/node.png">
-</p>
-
-New Nodes can be created by calling the `Node` constructor. The following code creates 3 Nodes to match the network above, and makes a socket connection from `node2` to `node3`.
+The implementation of this hub is currently pending.
 
 ```typescript
-import { Node } from 'smoke-node'
+import { Network, Hubs } from '@sinclair/smoke'
 
-const node1 = new Node() // 0.0.0.1
-const node2 = new Node() // 0.0.0.2
-const node3 = new Node() // 0.0.0.3
+const { Http } = new Network({ hub: new Hubs.Public('ws://server/hub') })
+```
 
-// start server on node3 and listen on port 5000
+<a name="Http"></a>
+## Http
 
-node3.sockets.createServer(socket => {
-  
-  socket.send('hello')
+The Http API supports Http listen and fetch over WebRTC. It also provides WebSocket emulation.
 
-  socket.close()
+```typescript
+const { Http } = new Network()
+```
 
-}).listen(5000)
+<a name="Http-Listen"></a>
+### Listen
 
-// connect to node2 from node3 server
+Use the Http listen function to receive Http requests from remote peers.
 
-const socket = node2.sockets.connect('0.0.0.3', 5000)
+```typescript
+Http.listen({ port: 5000 }, request => new Response('hello'))
+```
 
-socket.on('message', message => {
+<a name="Http-Fetch"></a>
+### Fetch
 
-  console.log(message.data)
+Use Http fetch function to make a Http request to remote peers.
+
+```typescript
+const response = await Http.fetch('http://localhost:5000')
+
+const message = await response.text()
+```
+
+<a name="Http-Upgrade"></a>
+### Upgrade
+
+Use upgrade function to convert a Http request into a WebSocket
+
+```typescript
+Http.listen({ port: 5000 }, request => Http.upgrade(request, (socket) => socket.send('hello')))
+```
+
+<a name="Http-Connect"></a>
+### Connect
+
+Use connect function to establish a connection remote WebSocket server.
+
+```typescript
+const socket = await Http.connect('ws://localhost:5000')
+
+socket.on('message', (event) => console.log(event.data))
+
+socket.on('error', (event) => console.log(event))
+
+socket.on('close', (event) => console.log(event))
+```
+
+<a name="Net"></a>
+## Net
+
+The Net API provides Tcp emulation over RTCDataChannel
+
+```typescript
+const { Net } = new Network()
+```
+
+<a name="Net-Listen"></a>
+### Listen
+
+Use the Net listen function to accept incoming sockets.
+
+```typescript
+Net.listen({ port: 5000 }, async socket => {
+
+  const data = await socket.read()
+
+  await socket.write(data)
+
+  await socket.close()
 })
 ```
 
-> Note that the addresses allocated from the `PageHub` are predictable and reset to `0.0.0.1` on page refresh. Each new node entering the network will be `0.0.0.[n+1]` up to `255`. Applications should not place any special meaning on these addresses other than them being plain random strings. The scheme used by the `PageHub` and `smoke-hub` implementations are for convenience only.
+<a name="Net-Connect"></a>
+### Connect
 
-> Note that Nodes can expose one or more ports. Ports in nodes are inferred from the `RTCDataChannel` label property. Connection attempts to non open ports on a smoke node result in the immediate closing of that connection.
-
-<a name="API"></a>
-## API
-
-Nodes house several APIs that allow them to function as network application servers. Many of the APIs provided by this library are based on NodeJS core and community modules that have been rebuilt from the ground up to operate over WebRTC. The following sections provide a high level overview of the APIs available on each Node instance.
+Use the connect function to establish a Net connection to a remote listener.
 
 ```typescript
-const { system, network, hub, sockets, rest, media, database, fs } = new Node()
+const socket = await Net.connect({ hostname: 'localhost', port: 5000 })
 
+await socket.write(new Uint8Array(1000))
+
+const data = await socket.read() // Uint8Array()
+
+const end = await socket.read() // null
 ```
 
-<a name="Node-System"></a>
-#### System  
+<a name="Media"></a>
+## Media
 
-Provides access to this Nodes uptime, network and storage metrics.
-
-<a name="Node-Network"></a>
-#### Network
-
-Provides access to the lowest levels of the node network stack. Allows for the binding and unbinding of ports, creating and listening for RTCDataChannels and provides direct access to the pool of RTCPeerConnections managed for this node.
-
-<a name="Node-Hub"></a>
-#### Hub
-
-Provides access to the signalling hub this node is connected to. Allows one to resolve their address in the network, register a hostname (or domain name) for the Node and lookup remote addresses from hostname. This API can be used to create peer discovery mechanisms through hostname registration.
-
-<a name="Node-Sockets"></a>
-#### Sockets
-
-Provides an interface to create and connect to socket server endpoints within the peer network. The sockets provided by this API are designed to function as typical Web Sockets. They layer RTCDataChannel to offer predictable network timeout, address resolution and sending and receiving  message payloads that exceed RTCDataChannel limits.
-
-<a name="Node-Rest"></a>
-#### Rest
-
-Provides an interface to create and connect to HTTP like endpoints over WebRTC. The RestServer and Fetch APIs implement full request response semantics allowing for the transmission of data using familiar mechanisms used to send and receive data over HTTP. The RestServer also allows for the hosting of MediaStream content.
-
-<a name="Node-Media"></a>
-#### Media
- 
-Provides an interface to create mediastreams from readable byte streams, such as those read from the IDB file system or received over the network. It also provides a test pattern mediastream source that can be used to test pass through without needing to setup stream sources (such as web camera feeds, etc)
-
-<a name="Examples"></a>
-## Examples
-
-The following are a few examples of applications that can be implemented with this library.
-
-<a name="Example1"></a>
-## Sockets and Loopback
-
-The following code creates a simple socket server and listens on port 7000. It is connected to in a variety of ways.
+The Media API provides functionality to send and receive MediaStream objects over WebRTC.
 
 ```typescript
-import { Node } from 'smoke-node'
-
-const node0 = new Node() // 0.0.0.1
-
-const node1 = new Node() // 0.0.0.2
-
-// listen 0.0.0.1 on port 7000
-
-node0.sockets.createServer(socket => console.log('have socket')).listen(7000)
-
-
-const socket0 = node0.sockets.connect('localhost', 7000) // ok
-
-const socket1 = node0.sockets.connect('0.0.0.1', 7000)   // ok
-
-const socket2 = node1.sockets.connect('localhost', 7000) // fail - not localhost
-
-socket2.on('error', console.log)
-
-const socket3 = node1.sockets.connect('0.0.0.1', 7000)   // ok
+const { Media } = new Network()
 ```
-<a name="Example2"></a>
-## Rest Server and Host names
 
-The following code demonstrates setting up a node running a rest server. The node is registered with the domain 'foobar.com' which is registered against the hub this node is connected to. Another node `node1` is created and fetches the content from the Rest server.
+<a name="Media-Listen"></a>
+### Listen
+
+Use the listen function to listen for incoming MediaStream
 
 ```typescript
-import { Node } from 'smoke-node'
-
-// Server
-
-(async () => {
+Media.listen({ port: 6000 }, (receiver) => {
   
-  const node0 = new Node({  })
-
-  // Registers a hostname for this network node.
-
-  await node0.hub.register('foobar.com') 
-
-  // Creates a Rest server.
-
-  const app = node0.rest.createServer()
-
-  app.get('/', async (req, res) => {
-
-    res.headers['Content-Type'] = 'text/html'
-    
-    res.send(`<h1>hello world</h1>`)
-  })
-
-  // Listens on port 80
-
-  app.listen(80)
-
-})();
-
-// Client
-
-setTimeout(async () => {
-
-  const node1 = new Node({ })
-
-  const response = await node1.rest.fetch('rest://foobar.com/')
+  const video = document.createElement('video')
   
-  const content = await response.text()
-
-  console.log(content)
-
-}, 1000)
-  
-```
-
-
-<a name="Example3"></a>
-## MediaStream and Media Proxy
-
-The Rest server offers the ability to stream live media feeds (such as those given by getUserMedia) as Rest responses. In addition, Smoke supports mediastream pass-through / proxy using familiar request / response semantics, leading to mediastream fan-out from a single source.
-
-The following code sets up 3 network nodes and pipelines a mediastream in the following way.
-
-```
-source > node0 > node1 > node2 > video element 
-```
-
-> Note, this component of smoke is highly experimental and subject to API changes.
-
-```typescript
-import { Node } from 'smoke-node'
-
-const node0 = new Node() // 0.0.0.1
-
-const node1 = new Node() // 0.0.0.2
-
-const node2 = new Node() // 0.0.0.3
-
-// node0 - the source
-
-node0.rest.createServer().get('/mediastream', (req, res) => {
-  
-  const mediastream = node0.media.createTestPattern()
-
-  res.mediastream(mediastream)
-
-}).listen(80)
-
-// node1 - the proxy
-
-const app1 = node1.rest.createServer()
-
-app1.get('/mediastream', async (req, res) => {
-  
-  const response = await node1.rest.fetch('rest://0.0.0.1/mediastream')
-
-  res.mediastream(await response.mediastream())
-
-}).listen(80)
-
-// node2 - the client
-
-;(async () => {
-
-  const response = await node2.rest.fetch('rest://0.0.0.2/mediastream')
-  
-  const video = document.getElementById('video-0') as HTMLVideoElement
-  
-  video.srcObject = await response.mediastream()
+  video.srcObject = receiver.mediastream
   
   video.play()
 
-})()
+  document.body.appendChild(video)
 
+  receiver.on('close', () => document.removeChild(video))
+})
 ```
 
-<a name="Example4"></a>
-## Database and Network Query
+<a name="Media-Send"></a>
+### Send
 
-The Rest server framework supports streaming record sets directly from IndexedDB out to rest responses. The Rest server may act as a direct database pass-through, or projected with LINQ style queries. Its designed to allow nodes to function as standalone database servers.
-
-Record iteration with queries means records are only pulled when the receiver moves 'next'. This is handled at a network protocol level and expressed with JavaScript async iterators.
-
-The following code writes some database records and serves them on a Rest endpoint. The server filters the results (view logic) which are ordered and projected when received by the client. 
+Use the send function to send a MediaStream to a listener
 
 ```typescript
-import { Node, Record, Database } from 'smoke-node'
+const sender = await Media.send({ hostname: 'localhost', port: 6000 }, new MediaStream([...]))
 
-
-// creates a IDB database with this name.
-const db = new Database('users')
-
-interface User extends Record { name: string, role: string }
-
-(async () => {
-
-  // use the rest and database namespaces only.
-  const { rest } = new Node()
-
-  // insert some users into the database.
-  db.insert('users', { key: db.key(), name: 'smith', role: 'admin' })
-
-  db.insert('users', { key: db.key(), name: 'mike', role: 'admin'  })
-  
-  db.insert('users', { key: db.key(), name: 'dave', role: 'user'  })
-  
-  db.insert('users', { key: db.key(), name: 'alice', role: 'user'  })
-  
-  db.insert('users', { key: db.key(), name: 'jones', role: 'user'  })
-  
-  await db.commit()
-
-  // create server with simple database view to the 'user' store.
-  rest.createServer().get('/users', (req, res) => {
-
-    const query = db.query<User>('users').where(n => n.role === 'user')
-    
-    res.query(query)
-  
-  }).listen(5433)
-
-
-  // request query from server.
-  const query = await rest.fetch('rest://localhost:5433/users').then(n => n.query<User>())
-
-  // apply order and iterate, new records pulled on each iteration.
-  for await (const user of query.orderBy(n => n.name).select(n => n.name)) {
-
-    console.log(user)
-  }
-
-})();
+sender.close() // stop sending live media
 ```
+
+<a name="Media-Audio"></a>
+### Audio
+
+Use the audio function to create a streamable AudioSource.
+
+```typescript
+const audio = Media.audio({ src: './audio.mp3' })
+
+const sender = Media.send({ hostname: 'localhost', port: 6000 }, audio.mediastream)
+```
+
+<a name="Media-Video"></a>
+### Video
+
+Use the video function to create a streamable VideoSource.
+
+```typescript
+const video = Media.video({ src: './video.mp4' })
+
+const sender = Media.send({ hostname: 'localhost', port: 6000 }, video.mediastream)
+```
+
+<a name="Media-Pattern"></a>
+### Pattern
+
+Use the pattern function to generate a MediaStream test pattern. This function can be useful for testing live media streaming without web cameras or other media sources.
+
+```typescript
+const pattern = Media.pattern()
+
+const sender = Media.send({ port: 5000 }, pattern.mediastream)
+```
+
+<a name="FileSystem"></a>
+## FileSystem
+
+Smoke provides a hierarchical file system capable of persisting large files within the browser. The file system is backed by IndexedDB and supports read, write, delete, directory enumeration and streaming.
+
+<a name="FileSystem-Open"></a>
+### Open
+
+Use the open function to open a FileSystem. The name passed to this function corrosponds to a IndexedDB database. A new IndexedDB database will be provisioned if one does not already exist.
+
+```typescript
+import { FileSystem } from '@sinclair/smoke'
+
+const Fs = await FileSystem.open('<database-name>')
+```
+
+<a name="FileSystem-Stat"></a>
+### Stat
+
+Use the stat function to return information about a file or directory.
+
+```typescript
+const stat = await Fs.write('/path/file.txt')
+```
+
+<a name="FileSystem-Exists"></a>
+### Exists
+
+Use the exists function to check a path exists.
+
+```typescript
+const exists = await Fs.exists('/path/file.txt')
+```
+
+<a name="FileSystem-MkDir"></a>
+### MkDir
+
+Use the mkdir function to recursively create a directory.
+
+```typescript
+await Fs.mkdir('/media/videos')
+```
+
+<a name="FileSystem-ReadDir"></a>
+### ReadDir
+
+Use the readdir function to return stat objects for the given directory path.
+
+```typescript
+const stats = await Fs.readdir('/media/videos')
+```
+
+<a name="FileSystem-Blob"></a>
+### Blob
+
+Use the blob function to return a Blob object to a file path.
+
+```typescript
+const blob = await Fs.readdir('/video.mp4')
+
+const url = URL.createObjectUrl(blob)
+```
+
+<a name="FileSystem-Write"></a>
+### Write
+
+Use the write function to write file content. If the file does not exist it is created. Intermediate directories are created recursively.
+
+```typescript
+await Fs.write('/path/file.dat', new Uint8Array([1, 2, 3, 4]))
+
+await Fs.writeText('/path/file.txt', 'hello world')
+```
+
+<a name="FileSystem-Read"></a>
+### Read
+
+Use the read function will read content from a file.
+
+```typescript
+const buffer = await fs.read('/path/file.dat')
+
+const content = await Fs.readText('/path/file.txt')
+```
+
+<a name="FileSystem-Delete"></a>
+### Delete
+
+Use the delete function to delete a file or directory. Delete is recursive.
+
+```typescript
+await Fs.delete('/path/file.txt')
+```
+
+
+## Contribute
+
+Smoke is open to community contribution. Please ensure you submit an open issue before submitting your pull request. The Smoke project prefers open community discussion before accepting new features.

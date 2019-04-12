@@ -1,0 +1,30 @@
+name: Test
+on: [push, pull_request]
+jobs:
+  # -----------------------------------------------------------
+  # Browser
+  # -----------------------------------------------------------
+  Browser:
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 2
+    strategy:
+      matrix:
+        node: [20.x]
+        os: [ubuntu-latest]
+    steps:
+      - uses: actions/checkout@v4
+      
+      - uses: browser-actions/setup-chrome@latest
+        with:
+          chrome-version: latest
+
+      - name: Install Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node }}
+
+      - name: Install Packages
+        run: npm install
+
+      - name: Test Library
+        run: npm test
