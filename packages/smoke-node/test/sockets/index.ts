@@ -283,7 +283,7 @@ describe('Sockets', () => {
   // #region message size
   it('should send and receive 1_000_000 byte message payloads', async () => {
     await use(async sockets => {
-      const input = support.createRandomBuffer(1_000_000)
+      const input = support.createRandomBuffer(1000000)
       sockets.createServer(socket => {
         socket.send(input)
         socket.close()
