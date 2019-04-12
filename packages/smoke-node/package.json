@@ -1,12 +1,12 @@
 {
   "name": "smoke-node",
-  "version": "1.0.0",
+  "version": "0.8.0",
   "license": "MIT",
-  "description": "A description of this project.",
-  "author": "user",
+  "description": "A framework for building WebRTC network services.",
+  "author": "sinclairzx81",
   "repository": {
     "type": "git",
-    "url": "https://github.com/user/smoke-node"
+    "url": "https://github.com/sinclairzx81/smoke"
   },
   "scripts": {
     "clean": "smoke-task clean",
