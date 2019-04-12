@@ -7,9 +7,9 @@ module.exports = config => config.set({
   colors:     true,
   logLevel:   config.LOG_INFO,
   autoWatch:  false,
-  browsers:   ['ChromeHeadless'],
+  // browsers:   ['ChromeHeadless'],
   // browsers:   ['FirefoxHeadless'],
-  // browsers:   ['ChromeHeadless', 'FirefoxHeadless'],
+  browsers:   ['ChromeHeadless', 'FirefoxHeadless'],
   singleRun:  true,
   concurrency: 1,
 })
