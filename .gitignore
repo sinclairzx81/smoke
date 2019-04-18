@@ -1,12 +1,12 @@
 node_modules
 
+# smoke-bench
+packages/bench/node_modules
+packages/bench/public
+
 # smoke-node
 packages/smoke-node/node_modules
 packages/smoke-node/public
-
-# smoke-bench
-packages/smoke-bench/node_modules
-packages/smoke-bench/public
 
 # smoke-tools
 packages/smoke-hub/node_modules
