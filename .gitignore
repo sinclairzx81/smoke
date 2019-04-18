@@ -1,6 +1,6 @@
 node_modules
 
-# smoke-bench
+# workbench
 packages/bench/node_modules
 packages/bench/public
 
@@ -8,10 +8,6 @@ packages/bench/public
 packages/smoke-node/node_modules
 packages/smoke-node/public
 
-# smoke-tools
+# smoke-hub
 packages/smoke-hub/node_modules
 packages/smoke-hub/public
-
-# smoke-webpack
-packages/smoke-webpack/node_modules
-packages/smoke-webpack/public
