@@ -44,6 +44,7 @@ Released under MIT
 
 ## Docs
 
+- [Formal](https://sinclairzx81.github.io/smoke/index.html)
 - [Hubs](#Hubs)
   - [PageHub](#PageHub)
   - [NetworkHub](#NetworkHub)
