@@ -6,7 +6,6 @@
   "scripts": {
     "clean": "smoke-task clean",
     "bench": "smoke-task bench",
-    "webpack": "smoke-task webpack",
     "test": "smoke-task test",
     "pack": "smoke-task pack",
     "doc": "smoke-task doc"

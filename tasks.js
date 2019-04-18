@@ -3,10 +3,10 @@ export async function clean() {
   await drop('node_modules')
 }
 
-export async function webpack() {
+export async function bench() {
   await Promise.all([
     shell('smoke-pack watch smoke-hub'),
-    shell('smoke-pack watch smoke-webpack')
+    shell('smoke-pack watch bench')
   ])
 }
 
@@ -21,5 +21,7 @@ export async function test() {
 }
 
 export async function doc() {
+  await shell('cd packages/smoke-node && npm install')
   await shell('smoke-pack run smoke-node doc')
+  await shell('shx cp -r packages/smoke-node/public/doc/. ./docs/')
 }
