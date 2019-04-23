@@ -363,15 +363,10 @@ interface User extends Record { name: string, role: string }
 
   // insert some users into the database.
   db.insert('users', { key: db.key(), name: 'smith', role: 'admin' })
-
   db.insert('users', { key: db.key(), name: 'mike', role: 'admin'  })
-  
   db.insert('users', { key: db.key(), name: 'dave', role: 'user'  })
-  
   db.insert('users', { key: db.key(), name: 'alice', role: 'user'  })
-  
   db.insert('users', { key: db.key(), name: 'jones', role: 'user'  })
-  
   await db.commit()
 
   // create server with simple database view to the 'user' store.
