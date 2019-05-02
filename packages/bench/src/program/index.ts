@@ -1,8 +1,8 @@
 import { Node, NetworkHub } from 'smoke-node'
 
-const node0 = new Node({ hub: new NetworkHub("ws://localhost:5001") })
+const host = new Node({ hub: new NetworkHub("ws://localhost:5001") })
 
-const server = node0.rest.createServer()
+const server = host.rest.createServer()
 
 server.get('/api', (req, res) => {
 
@@ -13,7 +13,7 @@ server.get('/api', (req, res) => {
 
 ;(async () => {
 
-  const address = await node0.address()
+  const address = await host.address()
 
   const node = new Node({ hub: new NetworkHub("ws://localhost:5001") })
   

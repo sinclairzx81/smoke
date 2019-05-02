@@ -34,7 +34,7 @@ const text = await node.rest.fetch('/').then(n => n.text())
 <a name="Overview"></a>
 ## Overview
 
-Smoke is an experimental peer to peer networking library that allows web browsers to run as WebRTC network hosts. This library allows one to run Web Socket and HTTP applications from inside Web Pages. Communication between browsers operates entirely peer to peer with each network Node able to support a upwards of 256 concurrent connections each. Nodes can be thought of as micro web service hosts run by users on page load.
+Smoke is an experimental peer to peer networking library that allows web browsers to run as WebRTC network service hosts. This library allows one to run Web Socket and HTTP like web applications from inside Web Pages. Communication between browsers operates entirely peer to peer with each network Node able to support a upwards of 256 concurrent connections each. Nodes can be thought of as micro web service hosts run by users on page load.
 
 This framework was written primarily as a tool to prototype various peer to peer networking architectures. It allows for the rapid creation of fairly sophisticated peer to peer network systems in just a few lines of code. It is offered as is to anyone who finds it of any use.
 
@@ -44,6 +44,7 @@ Released under MIT
 
 ## Docs
 
+- [Formal](https://sinclairzx81.github.io/smoke/index.html)
 - [Hubs](#Hubs)
   - [PageHub](#PageHub)
   - [NetworkHub](#NetworkHub)
@@ -362,15 +363,10 @@ interface User extends Record { name: string, role: string }
 
   // insert some users into the database.
   db.insert('users', { key: db.key(), name: 'smith', role: 'admin' })
-
   db.insert('users', { key: db.key(), name: 'mike', role: 'admin'  })
-  
   db.insert('users', { key: db.key(), name: 'dave', role: 'user'  })
-  
   db.insert('users', { key: db.key(), name: 'alice', role: 'user'  })
-  
   db.insert('users', { key: db.key(), name: 'jones', role: 'user'  })
-  
   await db.commit()
 
   // create server with simple database view to the 'user' store.

@@ -26,15 +26,13 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-import { Server } from './hub/index'
+import { NullLog, ConsoleLog } from './log'
+import { HubServer }           from './hub'
+import { cli }                 from './cli'
 
-const server = new Server({
-  iceServers: [
-    { urls: 'stun:stun1.l.google.com:19302' },
-    { urls: 'stun:stun2.l.google.com:19302' }
-  ]
-})
+const options = cli(process.argv)
+const logger  = options.trace ? new ConsoleLog() : new NullLog()
+const server  = new HubServer(options.config, logger)
+server.listen(options.port)
 
-server.listen(5001)
-
-console.log('smoke-hub: listening on port 5001')
+console.log(`smoke-hub: listening on port ${options.port}`)

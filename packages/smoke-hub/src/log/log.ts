@@ -1,6 +1,6 @@
 /*--------------------------------------------------------------------------
 
-smoke
+smoke-hub
 
 The MIT License (MIT)
 
@@ -26,4 +26,6 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-export { HubServer } from './server'
+export interface ILog {
+  log(...args: any): void
+}

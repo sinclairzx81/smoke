@@ -27,6 +27,7 @@ THE SOFTWARE.
 ---------------------------------------------------------------------------*/
 
 import * as WebSocket from 'ws'
+import { ILog }       from '../log'
 import { Dhcp }       from './dhcp'
 
 // -------------------------------------------------------
@@ -104,7 +105,7 @@ export interface LookupFail {
 
 // -------------------------------------------------------
 //
-// Server
+// HubServer
 //
 // Simple smoke webrtc signalling server. Implements the
 // smoke signalling protocol for connecting clients in a
@@ -124,13 +125,15 @@ type Message =
 | LookupOk 
 | LookupFail
 
-export class Server {
+export class HubServer {
   private server!:   WebSocket.Server
   private hostnames: Map<Hostname, Address>
   private sockets:   Map<Address,  WebSocket>
   private dhcp:      Dhcp
 
-  constructor(private configuration: RTCConfiguration) {
+  constructor(
+      private readonly configuration: RTCConfiguration, 
+      private readonly logger: ILog) {
     this.sockets   = new Map<string, WebSocket>()
     this.hostnames = new Map<Hostname, Address>()
     this.dhcp      = new Dhcp()
@@ -146,12 +149,14 @@ export class Server {
     socket.on('close',   ()    => this.onClose(address))
     socket.send(JSON.stringify({ type, address, configuration } as Binding))
     this.sockets.set(address, socket)
+    this.logger.log('connect', address)
   }
 
   /** Handles an incoming message from the given address. */
   private onMessage(address: string, data: WebSocket.Data) {
     try {
       const message = JSON.parse(data as string) as Message
+      this.logger.log('message', address, message)
       switch(message.type) {
         case "forward":  return this.onForward(address, message)
         case "register": return this.onRegister(address, message)

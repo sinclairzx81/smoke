@@ -20,14 +20,14 @@ export async function conditional_build() {
 
 export async function start() {
   await conditional_build()
-  await shell('node public/bin/index.js')
+  await shell('node public/bin/index.js --port 5001 --config ./ice.json --trace')
 }
 
 export async function watch() {
   await conditional_build()
   await Promise.all([
     shell('tsc-bundle src/tsconfig.json --outFile public/bin/index.js --watch'),
-    shell('smoke-run public/bin/index.js -- node public/bin/index.js')
+    shell('smoke-run public/bin/index.js -- node public/bin/index.js --port 5001 --config ./ice.json --trace')
   ])
 }
 

@@ -1,6 +1,6 @@
 /*--------------------------------------------------------------------------
 
-smoke
+smoke-hub
 
 The MIT License (MIT)
 
@@ -26,4 +26,10 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-export { HubServer } from './server'
+import { ILog } from './log'
+
+export class ConsoleLog implements ILog {
+  public log(...args: any[]): void {
+    console.log(...args)
+  }
+}
