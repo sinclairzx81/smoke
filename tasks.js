@@ -28,6 +28,6 @@ export async function doc() {
   // re-publish gh-pages - from master branch
   
   // git push origin :gh-pages
-  // git subtree push --prefix dist origin gh-pages
+  // git subtree push --prefix docs origin gh-pages
 
 }
