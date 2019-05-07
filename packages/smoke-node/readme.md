@@ -229,8 +229,8 @@ const socket3 = node1.sockets.connect('0.0.0.1', 7000)   // ok
 ## Rest Server and Addresses
 
 The following code demonstrates setting up a node running a rest server. This code
-setups on a `host` node that runs a small rest server. A seconary node is created
-and uses the `host` address to make a `fetch` request.
+sets a `host` node that runs a small rest server. A seconary node is then created
+and uses the `hosts` address to make a `fetch` request to download content.
 
 ```typescript
 import { Node } from 'smoke-node'
@@ -360,10 +360,13 @@ interface User extends Record { name: string, role: string }
 
   // insert some users into the database.
   db.insert('users', { key: db.key(), name: 'smith', role: 'admin' })
+
   db.insert('users', { key: db.key(), name: 'mike', role: 'admin'  })
+  
   db.insert('users', { key: db.key(), name: 'dave', role: 'user'  })
-  db.insert('users', { key: db.key(), name: 'alice', role: 'user'  })
+  
   db.insert('users', { key: db.key(), name: 'jones', role: 'user'  })
+  
   await db.commit()
 
   // create server with simple database view to the 'user' store.

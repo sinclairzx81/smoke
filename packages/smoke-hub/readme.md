@@ -12,6 +12,9 @@ $ npm install smoke-hub -g
 ```
 $ smoke-hub --port 5001
 ```
+
+Client implementation if running on `localhost`.
+
 ```typescript
 import { Node, NetworkHub } from 'smoke-node'
 
