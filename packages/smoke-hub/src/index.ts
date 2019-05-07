@@ -26,13 +26,15 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-import { NullLog, ConsoleLog } from './log'
-import { HubServer }           from './hub'
-import { cli }                 from './cli'
+import { Hub } from './hub'
+import { Cli } from './cli'
 
-const options = cli(process.argv)
-const logger  = options.trace ? new ConsoleLog() : new NullLog()
-const server  = new HubServer(options.config, logger)
+const options = Cli.parse(process.argv)
+const server  = new Hub(options.config, (...args: any[]) => {
+  if(options.trace) {
+    console.log(args)
+  }
+})
 server.listen(options.port)
 
 console.log(`smoke-hub: listening on port ${options.port}`)

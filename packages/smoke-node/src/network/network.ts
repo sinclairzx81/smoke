@@ -192,7 +192,6 @@ export class Network implements Disposable {
 
   /** Gets or creates a peer to the remote endpoint. */
   public async getPeer(remote: string): Promise<Peer> {
-    remote = await this.resolveAddressOrHostname(remote)
     const configuration = await this.hub.configuration()
     const local         = await this.hub.address()
     if (!this.peers.has(remote)) {
@@ -378,25 +377,5 @@ export class Network implements Disposable {
     return request.data.loopback === Loopback.Sender   ? 'localhost:1' :
            request.data.loopback === Loopback.Receiver ? 'localhost:0' :
            request.from
-  }
-
-  /** 
-   * Resolves the hostname via hub lookup. If not found, just return 
-   * the hostname. It may be preferable to just 'throw' if not found and
-   * alert to the user that the route to host is unreachable. Current
-   * downstream socket and rest behaviours will deal in timeout, we could
-   * handle both.
-   */
-  private async resolveAddressOrHostname(hostname: string): Promise<string> {
-    const local    = await this.hub.address()
-    const lookup   = await this.hub.lookup(hostname)
-    const length   = lookup.addresses.length
-    const resolved = (length > 0)
-      ? lookup.addresses[Math.floor(Math.random() * length)]
-      : hostname
-    return (resolved !== local)
-      ? resolved
-      : 'localhost:1'
-       
   }
 }

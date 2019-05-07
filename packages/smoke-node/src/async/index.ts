@@ -28,6 +28,5 @@ THE SOFTWARE.
 
 export { Events }       from './events'
 export { EventHandler } from './events'
-export { Deferred }     from './deferred'
 export { Barrier }      from './barrier'
 export { Semaphore }    from './semaphore'

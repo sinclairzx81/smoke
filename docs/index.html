@@ -86,12 +86,13 @@ app.listen(<span class="hljs-number">80</span>)</code></pre>
 				<pre><code class="language-typescript"><span class="hljs-keyword">const</span> text = <span class="hljs-keyword">await</span> node.rest.fetch(<span class="hljs-string">'/'</span>).then(<span class="hljs-function"><span class="hljs-params">n</span> =&gt;</span> n.text())</code></pre>
 				<p><a name="Overview"></a></p>
 				<h2 id="overview">Overview</h2>
-				<p>Smoke is an experimental peer to peer networking library that allows web browsers to run as WebRTC network hosts. This library allows one to run Web Socket and HTTP applications from inside Web Pages. Communication between browsers operates entirely peer to peer with each network Node able to support a upwards of 256 concurrent connections each. Nodes can be thought of as micro web service hosts run by users on page load.</p>
+				<p>Smoke is an experimental peer to peer networking library that allows web browsers to run as WebRTC network service hosts. This library allows one to run Web Socket and HTTP like web applications from inside Web Pages. Communication between browsers operates entirely peer to peer with each network Node able to support a upwards of 256 concurrent connections each. Nodes can be thought of as micro web service hosts run by users on page load.</p>
 				<p>This framework was written primarily as a tool to prototype various peer to peer networking architectures. It allows for the rapid creation of fairly sophisticated peer to peer network systems in just a few lines of code. It is offered as is to anyone who finds it of any use.</p>
 				<p>Built with and tested with Chrome 72, Firefox 65 and Electron 4.0.4.</p>
 				<p>Released under MIT</p>
 				<h2 id="docs">Docs</h2>
 				<ul>
+					<li><a href="https://sinclairzx81.github.io/smoke/index.html">Formal</a></li>
 					<li><a href="#Hubs">Hubs</a><ul>
 							<li><a href="#PageHub">PageHub</a></li>
 							<li><a href="#NetworkHub">NetworkHub</a></li>
@@ -108,7 +109,7 @@ app.listen(<span class="hljs-number">80</span>)</code></pre>
 					</li>
 					<li><a href="#Examples">Examples</a><ul>
 							<li><a href="#Example1">Sockets and Loopback</a> </li>
-							<li><a href="#Example2">Rest Server and Hostnames</a> </li>
+							<li><a href="#Example2">Rest Server and Addresses</a> </li>
 							<li><a href="#Example3">MediaStream and Media Proxy</a> </li>
 							<li><a href="#Example4">Database and Network Query</a> </li>
 						</ul>
@@ -123,9 +124,8 @@ app.listen(<span class="hljs-number">80</span>)</code></pre>
 				<p>Smoke Hubs provide the following functionality:</p>
 				<ul>
 					<li>They provide ICE configuration for Nodes (STUN / TURN)</li>
-					<li>They provide SDP, ICE Candidate forwarding services for WebRTC (ICE)</li>
 					<li>They provide a each Node a unique address. (DHCP)</li>
-					<li>They provide a means for a Node to register a public hostname (DNS)</li>
+					<li>They provide SDP, ICE Candidate forwarding services for WebRTC (ICE)</li>
 				</ul>
 				<p>From a application standpoint, Hubs are intended to be fairly transparent to applications (in much the same way as one doesn&#39;t usually give much thought to a home router when connecting to devices in a local area network), but they are important; forming the backbone of a peer network and playing a central role in describing the overall topology and partitioning of a network.</p>
 				<p>Smoke provides two built in Hub types:</p>
@@ -236,23 +236,21 @@ socket2.on(<span class="hljs-string">'error'</span>, <span class="hljs-built_in"
 
 <span class="hljs-keyword">const</span> socket3 = node1.sockets.connect(<span class="hljs-string">'0.0.0.1'</span>, <span class="hljs-number">7000</span>)   <span class="hljs-comment">// ok</span></code></pre>
 				<p><a name="Example2"></a></p>
-				<h2 id="rest-server-and-host-names">Rest Server and Host names</h2>
-				<p>The following code demonstrates setting up a node running a rest server. The node is registered with the domain &#39;foobar.com&#39; which is registered against the hub this node is connected to. Another node <code>node1</code> is created and fetches the content from the Rest server.</p>
+				<h2 id="rest-server-and-addresses">Rest Server and Addresses</h2>
+				<p>The following code demonstrates setting up a node running a rest server. This code
+					setups on a <code>host</code> node that runs a small rest server. A seconary node is created
+				and uses the <code>host</code> address to make a <code>fetch</code> request.</p>
 				<pre><code class="language-typescript"><span class="hljs-keyword">import</span> { Node } <span class="hljs-keyword">from</span> <span class="hljs-string">'smoke-node'</span>
 
 <span class="hljs-comment">// Server</span>
 
 (<span class="hljs-keyword">async</span> () =&gt; {
 
-  <span class="hljs-keyword">const</span> node0 = <span class="hljs-keyword">new</span> Node({  })
+  <span class="hljs-comment">// Host...</span>
 
-  <span class="hljs-comment">// Registers a hostname for this network node.</span>
+  <span class="hljs-keyword">const</span> host = <span class="hljs-keyword">new</span> Node({  })
 
-  <span class="hljs-keyword">await</span> node0.hub.register(<span class="hljs-string">'foobar.com'</span>) 
-
-  <span class="hljs-comment">// Creates a Rest server.</span>
-
-  <span class="hljs-keyword">const</span> app = node0.rest.createServer()
+  <span class="hljs-keyword">const</span> app = host.rest.createServer()
 
   app.get(<span class="hljs-string">'/'</span>, <span class="hljs-keyword">async</span> (req, res) =&gt; {
 
@@ -261,19 +259,19 @@ socket2.on(<span class="hljs-string">'error'</span>, <span class="hljs-built_in"
     res.send(<span class="hljs-string">`&lt;h1&gt;hello world&lt;/h1&gt;`</span>)
   })
 
-  <span class="hljs-comment">// Listens on port 80</span>
-
   app.listen(<span class="hljs-number">80</span>)
 
-})();
+  <span class="hljs-comment">// Client</span>
 
-<span class="hljs-comment">// Client</span>
+  <span class="hljs-comment">// Resolve the host address. The host may choose to publish their address to</span>
+  <span class="hljs-comment">// a remote registry or other discovery service for other nodes to find it.</span>
+  <span class="hljs-comment">// Here we simply call the hosts .address() method directly.</span>
 
-setTimeout(<span class="hljs-keyword">async</span> () =&gt; {
+  <span class="hljs-keyword">const</span> address = <span class="hljs-keyword">await</span> host.address()
 
-  <span class="hljs-keyword">const</span> node1 = <span class="hljs-keyword">new</span> Node({ })
+  <span class="hljs-keyword">const</span> node = <span class="hljs-keyword">new</span> Node({ })
 
-  <span class="hljs-keyword">const</span> response = <span class="hljs-keyword">await</span> node1.rest.fetch(<span class="hljs-string">'rest://foobar.com/'</span>)
+  <span class="hljs-keyword">const</span> response = <span class="hljs-keyword">await</span> node.rest.fetch(<span class="hljs-string">`rest://<span class="hljs-subst">${address}</span>/`</span>)
 
   <span class="hljs-keyword">const</span> content = <span class="hljs-keyword">await</span> response.text()
 
@@ -352,15 +350,10 @@ app1.get(<span class="hljs-string">'/mediastream'</span>, <span class="hljs-keyw
 
   <span class="hljs-comment">// insert some users into the database.</span>
   db.insert(<span class="hljs-string">'users'</span>, { key: db.key(), name: <span class="hljs-string">'smith'</span>, role: <span class="hljs-string">'admin'</span> })
-
   db.insert(<span class="hljs-string">'users'</span>, { key: db.key(), name: <span class="hljs-string">'mike'</span>, role: <span class="hljs-string">'admin'</span>  })
-
   db.insert(<span class="hljs-string">'users'</span>, { key: db.key(), name: <span class="hljs-string">'dave'</span>, role: <span class="hljs-string">'user'</span>  })
-
   db.insert(<span class="hljs-string">'users'</span>, { key: db.key(), name: <span class="hljs-string">'alice'</span>, role: <span class="hljs-string">'user'</span>  })
-
   db.insert(<span class="hljs-string">'users'</span>, { key: db.key(), name: <span class="hljs-string">'jones'</span>, role: <span class="hljs-string">'user'</span>  })
-
   <span class="hljs-keyword">await</span> db.commit()
 
   <span class="hljs-comment">// create server with simple database view to the 'user' store.</span>
@@ -402,9 +395,6 @@ app1.get(<span class="hljs-string">'/mediastream'</span>, <span class="hljs-keyw
 					</li>
 					<li class=" tsd-kind-external-module tsd-is-external">
 						<a href="modules/_async_barrier_.html">"async/barrier"</a>
-					</li>
-					<li class=" tsd-kind-external-module tsd-is-external">
-						<a href="modules/_async_deferred_.html">"async/deferred"</a>
 					</li>
 					<li class=" tsd-kind-external-module tsd-is-external">
 						<a href="modules/_async_events_.html">"async/events"</a>

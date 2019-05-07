@@ -32,7 +32,7 @@ THE SOFTWARE.
 //
 // -----------------------------------------------------------------------------
 
-export { Barrier, Deferred, Events, EventHandler, Semaphore } from './async'
+export { Barrier, Events, EventHandler, Semaphore } from './async'
 
 // -----------------------------------------------------------------------------
 //

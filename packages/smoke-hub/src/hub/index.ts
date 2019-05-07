@@ -26,4 +26,4 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-export { HubServer } from './server'
+export { Hub } from './hub'

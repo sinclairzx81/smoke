@@ -26,4 +26,4 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-export { Options, cli } from './cli'
+export { Options, Cli } from './cli'

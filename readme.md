@@ -57,7 +57,7 @@ Released under MIT
   - [Media](#Node-Media)
 - [Examples](#Examples)
   - [Sockets and Loopback](#Example1) 
-  - [Rest Server and Hostnames](#Example2) 
+  - [Rest Server and Addresses](#Example2) 
   - [MediaStream and Media Proxy](#Example3) 
   - [Database and Network Query](#Example4) 
 
@@ -73,9 +73,8 @@ A Hub is the name given to Smoke's WebRTC signalling infrastructure. It is a for
 Smoke Hubs provide the following functionality:
 
 - They provide ICE configuration for Nodes (STUN / TURN)
-- They provide SDP, ICE Candidate forwarding services for WebRTC (ICE)
 - They provide a each Node a unique address. (DHCP)
-- They provide a means for a Node to register a public hostname (DNS)
+- They provide SDP, ICE Candidate forwarding services for WebRTC (ICE)
 
 From a application standpoint, Hubs are intended to be fairly transparent to applications (in much the same way as one doesn't usually give much thought to a home router when connecting to devices in a local area network), but they are important; forming the backbone of a peer network and playing a central role in describing the overall topology and partitioning of a network.
 
@@ -227,9 +226,11 @@ socket2.on('error', console.log)
 const socket3 = node1.sockets.connect('0.0.0.1', 7000)   // ok
 ```
 <a name="Example2"></a>
-## Rest Server and Host names
+## Rest Server and Addresses
 
-The following code demonstrates setting up a node running a rest server. The node is registered with the domain 'foobar.com' which is registered against the hub this node is connected to. Another node `node1` is created and fetches the content from the Rest server.
+The following code demonstrates setting up a node running a rest server. This code
+setups on a `host` node that runs a small rest server. A seconary node is created
+and uses the `host` address to make a `fetch` request.
 
 ```typescript
 import { Node } from 'smoke-node'
@@ -238,15 +239,11 @@ import { Node } from 'smoke-node'
 
 (async () => {
   
-  const node0 = new Node({  })
+  // Host...
 
-  // Registers a hostname for this network node.
+  const host = new Node({  })
 
-  await node0.hub.register('foobar.com') 
-
-  // Creates a Rest server.
-
-  const app = node0.rest.createServer()
+  const app = host.rest.createServer()
 
   app.get('/', async (req, res) => {
 
@@ -255,19 +252,19 @@ import { Node } from 'smoke-node'
     res.send(`<h1>hello world</h1>`)
   })
 
-  // Listens on port 80
-
   app.listen(80)
 
-})();
+  // Client
 
-// Client
+  // Resolve the host address. The host may choose to publish their address to
+  // a remote registry or other discovery service for other nodes to find it.
+  // Here we simply call the hosts .address() method directly.
 
-setTimeout(async () => {
+  const address = await host.address()
 
-  const node1 = new Node({ })
+  const node = new Node({ })
 
-  const response = await node1.rest.fetch('rest://foobar.com/')
+  const response = await node.rest.fetch(`rest://${address}/`)
   
   const content = await response.text()
 

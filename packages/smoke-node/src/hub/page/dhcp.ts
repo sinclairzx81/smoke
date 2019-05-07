@@ -26,28 +26,23 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-// -------------------------------------------------------------------------
-//
-// Dhcp
-//
-// Dhcp emulation. Allocates IPv4 like addresses on behalf of connecting nodes.
-//
-// -------------------------------------------------------------------------
-
+/**
+ * Dhcp
+ * 
+ * Allocates IPv4 like addresses on behalf of connecting nodes.
+ */
 export class Dhcp {
-  private index: number = 0
-  /** Fetches the next IP address in the sequence. */
+  private element: Uint32Array
+  constructor() {
+    this.element = new Uint32Array(1)
+    this.element[0] = 0 
+  }
+
+  /** Gets the next address. */
   public next(): string {
-    this.index += 1
-    const bounds  = [256, 256, 256, 256]
-    const address = bounds.reduce<[number[], number]>(
-      (state, rank, index) => {
-        state[0][index] = Math.floor((this.index / state[1]) % rank)
-        state[1] *= rank
-        return state
-      },
-      [Array.from({ length: bounds.length }), 1]
-    )[0]
-    return address.reverse().join('.')
+    const buffer = new Uint8Array(this.element.buffer)
+    const result = [...buffer].join('.')
+    this.element[0] += 1
+    return result
   }
 }

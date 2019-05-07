@@ -27,8 +27,6 @@ THE SOFTWARE.
 ---------------------------------------------------------------------------*/
 
 import { readFileSync } from 'fs'
-import { help }         from './help'
-
 
 const DEFAULT_PORT = 5001
 
@@ -39,70 +37,76 @@ const DEFAULT_CONFIGURATION = {
   ]
 }
 
-/**
- * Options. A set of cli options parsed from the command line.
- */
 export interface Options {
-  /**
-   * The RTCConfiguration object. The Hub will transmit this to the
-   * client on connection to the hub. Client will use this config
-   * when establishing connection to other peers.
-   */
+  /** The RTCConfiguration object. */
   config: RTCConfiguration
-  /**
-   * The port that this hub server should listen on.
-   */
-  port:   number
-  
-  /**
-   * Will trace SDP and candidate messages sent between peers to stdout.
-   */
-  trace:  boolean
+  /** The port that this hub server should listen on. */
+  port: number
+  /** Will trace SDP and candidate messages sent between peers to stdout. */
+  trace: boolean
 }
 
-/** Resolves arguments passed via the command line. */
-export function cli(argv: string[]): Options {
+/** Command line interface */
+export class Cli {
+  public static help() {
+    const green = '\x1b[32m'
+    const esc = '\x1b[0m'
+    console.log(`Version 0.8.2
 
-  const parameters = [...argv.slice(2)]
-    .map(n => n.trim())
-    .filter(n => n.length > 0)
-  
-  if(parameters.length === 0) {
-    help()
-    process.exit(0)
+    Examples: ${green}smoke-hub${esc} --port 5000
+              ${green}smoke-hub${esc} --port 5000 --config ./ice.json
+              ${green}smoke-hub${esc} --port 5000 --trace
+    
+    Options:
+      --port    The port to start this hub on (default is 5001)
+      --config  The path to a JSON file containing the RTCConfiguration.
+      --trace   If specified, will emit protocol messages to stdout.
+      `)
   }
 
-  const options = {
-    config: DEFAULT_CONFIGURATION,
-    port:   DEFAULT_PORT,
-    trace:  false
-  }
+  /** Resolves arguments passed via the command line. */
+  public static parse(argv: string[]): Options {
+    const parameters = [...argv.slice(2)]
+      .map(n => n.trim())
+      .filter(n => n.length > 0)
 
-  while(parameters.length > 0) {
-    const current = parameters.shift()!
-    switch(current) {
-      case '--port': {
-        const next = parameters.shift()!
-        const port = parseInt(next)
-        options.port = port
-        break
-      }
-      case '--config': {
-        const next    = parameters.shift()!
-        const content = readFileSync(next, 'utf8')
-        const config  = JSON.parse(content)
-        options.config = config
-        break
-      }
-      case '--trace': {
-        options.trace = true
-        break
-      }
-      default: {
-        throw Error(`Unknown option ${current}`)
+    if (parameters.length === 0) {
+      this.help()
+      process.exit(0)
+    }
+
+    const options = {
+      config: DEFAULT_CONFIGURATION,
+      port: DEFAULT_PORT,
+      trace: false
+    }
+
+    while (parameters.length > 0) {
+      const current = parameters.shift()!
+      switch (current) {
+        case '--port': {
+          const next = parameters.shift()!
+          const port = parseInt(next)
+          options.port = port
+          break
+        }
+        case '--config': {
+          const next = parameters.shift()!
+          const content = readFileSync(next, 'utf8')
+          const config = JSON.parse(content)
+          options.config = config
+          break
+        }
+        case '--trace': {
+          options.trace = true
+          break
+        }
+        default: {
+          throw Error(`Unknown option ${current}`)
+        }
       }
     }
+
+    return options
   }
-  
-  return options;
 }

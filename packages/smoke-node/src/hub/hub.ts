@@ -41,52 +41,12 @@ export interface Binding {
  }
  
  export interface Forward<T = any> {
-   type: 'forward'
-   from: string
-   to:   string
-   data: T
+   type:          'forward'
+   from:          string
+   to:            string
+   data:          T
  }
  
- // ------------------------------------------------------------
- //
- // Hub Dns Protocol
- //
- // ------------------------------------------------------------
- 
- export interface Register {
-   type:         'register'
-   request_id:    number
-   hostname:      string
- }
- export interface RegisterOk {
-   type:         'register-ok'
-   request_id:    number
-   hostname:      string
- }
- export interface RegisterFail {
-   type:         'register-fail'
-   request_id:   number
-   hostname:     string
-   reason:       string
- }
- export interface Lookup {
-   type:         'lookup'
-   request_id:    number
-   hostname:      string
- }
- export interface LookupOk {
-   type:         'lookup-ok'
-   request_id:    number
-   hostname:      string
-   addresses:     string[]
- }
- export interface LookupFail {
-   type:         'lookup-fail'
-   request_id:   number
-   hostname:     string
-   reason:       string
- } 
-
 /**
  * Common network hub. This type acts as a bridge between the local and
  * remote nodes within a peer network. It deals with forwarding messages 
@@ -107,12 +67,6 @@ export interface Hub {
  
    /** Returns the address of this hub. */
    address(): Promise<string>
- 
-   /** Registers a hostname. */
-   register(hostname: string): Promise<RegisterOk>
- 
-   /** Looks up addresses with the given hostname. */
-   lookup(hostname: string): Promise<LookupOk>
  
    /** Forwards the given message to the given 'to' address. */
    forward<T>(to: string, data: T): Promise<void>
