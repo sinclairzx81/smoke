@@ -8,7 +8,7 @@
 
 # Smoke
 
-A framework for building WebRTC Web Servers
+A framework for building Web Server applications in the browser over WebRTC.
 
 ```
 $ npm install smoke-node --save
@@ -34,15 +34,15 @@ const text = await node.rest.fetch('/').then(n => n.text())
 <a name="Overview"></a>
 ## Overview
 
-Smoke is an experimental peer to peer networking framework that allows Web Browsers to run as Web Server hosts over WebRTC. This library provides APIs to host both Web Socket and HTTP like web applications in a pure browser context and provides familiar APIs to consume services on remote peers as one would consume Web Servers over HTTP. 
+Smoke is an experimental peer to peer networking framework that allows Web Browsers to run as lightweight Web Servers that operate over WebRTC. It offers a set of APIs to run both HTTP and Web Socket server like functionality in the browser as well as a set of Web like APIs to consume content hosted in remote browsers.
 
-Communication between browsers operates entirely peer to peer over WebRTC with each network Node able to support a upwards of 256 concurrent connections each. New Web Server nodes may be deployed on page load, with potential to scale server infrastructure proportional to the number of users.
+Communication between browsers operates entirely peer to peer with each network Node able to support hundreds of concurrent connections. New server nodes may be deployed when users load web pages, with some potential to scale node infrastructure proportional to the number of users loading pages.
 
-In addition, this library provides two storage mechanisms for persisting object and file data by leveraging IndexedDB. This allows for nodes to host file and data in much the same way as one would with a traditional file and api server.
+Additionally, this library provides two storage mechanisms for persisting object and file data by leveraging IndexedDB. Nodes can host file and data in much the same way as one would with a traditional file or api server, with IndexedDB offering gigabytes of storage at each node.
 
-This framework was written primarily as a tool to prototype various peer to peer networking architectures. It allows for the rapid creation of fairly sophisticated peer to peer network systems in just a few lines of code and aims to be a baseline for exploring DHT (Chord, Kademlia), IPFS and other distributed technologies using browsers and electron applications to function as peer network hosts.
+This framework was written primarily as a tool to prototype various peer to peer networking architectures. It aims to offer a baseline for exploring various decentralized and distributed technologies using the network and storage capabilites available in modern browsers.
 
-This framework is offered as is to anyone who finds it of any use. Built with and tested with Chrome 72, Firefox 65 and Electron 4.0.4.
+This framework is offered as is to anyone who finds it of use. Built with and tested with Chrome 72, Firefox 65 and Electron 4.0.4.
 
 Released under MIT
 
@@ -285,14 +285,20 @@ would with S3.
 ```typescript
 import { Node, Bucket } from 'smoke-node'
 
-const bucket = new Bucket('files')
+// Creates a IDB database named 'my-files'
+const bucket = new Bucket('my-files')
 
+// Writes this content to 'index.html'
 await bucket.write('index.html', '<h1>hello</h1>')
 
+
+// Creates a new network node.
 const node = new Node()
 
+// Create a new rest server.
 const app = node.rest.createServer()
 
+// Serves the content from the bucket.
 app.get('/index.html', (req, res) => {
 
   res.readable(bucket.readable('index.html'))
@@ -302,7 +308,7 @@ app.get('/index.html', (req, res) => {
 <a name="Examples"></a>
 ## Examples
 
-The following are a few examples of applications that can be implemented with this library.
+The following are a few examples of applications that can be implemented with this framework.
 
 <a name="Example1"></a>
 ## Sockets and Loopback
@@ -310,6 +316,7 @@ The following are a few examples of applications that can be implemented with th
 The following code creates a simple socket server and listens on port 7000. It is connected to in a variety of ways.
 
 ```typescript
+
 import { Node } from 'smoke-node'
 
 const node0 = new Node() // 0.0.0.1
@@ -331,6 +338,7 @@ socket2.on('error', console.log)
 
 const socket3 = node1.sockets.connect('0.0.0.1', 7000)   // ok
 ```
+
 <a name="Example2"></a>
 ## Rest Server and Addresses
 
@@ -341,11 +349,9 @@ and uses the `hosts` address to make a `fetch` request to download content.
 ```typescript
 import { Node } from 'smoke-node'
 
-// Server
-
 (async () => {
   
-  // Host...
+  // Server
 
   const host = new Node({  })
 
@@ -362,15 +368,9 @@ import { Node } from 'smoke-node'
 
   // Client
 
-  // Resolve the host address. The host may choose to publish their address to
-  // a remote registry or other discovery service for other nodes to find it.
-  // Here we simply call the hosts .address() method directly.
-
-  const address = await host.address()
-
   const node = new Node({ })
 
-  const response = await node.rest.fetch(`rest://${address}/`)
+  const response = await node.rest.fetch(`rest://${await host.address()}/`)
   
   const content = await response.text()
 
@@ -403,7 +403,7 @@ const node1 = new Node() // 0.0.0.2
 
 const node2 = new Node() // 0.0.0.3
 
-// node0 - the source
+// node0 - The video source.
 
 node0.rest.createServer().get('/mediastream', (req, res) => {
   
@@ -413,7 +413,7 @@ node0.rest.createServer().get('/mediastream', (req, res) => {
 
 }).listen(80)
 
-// node1 - the proxy
+// node1 - The video proxy.
 
 const app1 = node1.rest.createServer()
 
@@ -453,42 +453,59 @@ The following code writes some database records and serves them on a Rest endpoi
 ```typescript
 import { Node, Record, Database } from 'smoke-node'
 
-
-// creates a IDB database with this name.
-const db = new Database('users')
-
-interface User extends Record { name: string, role: string }
-
 (async () => {
 
-  // use the rest and database namespaces only.
+  // Use the rest namespace.
   const { rest } = new Node()
+  
+  // Creates a IDB database with this name.
+  const db = new Database('users')
 
-  // insert some users into the database.
-  db.insert('users', { key: db.key(), name: 'smith', role: 'admin' })
+  // Insert some users into the database.
+  db.insert('users', { 
+    key: db.key(), 
+    name: 'smith', 
+    role: 'admin' 
+  })
 
-  db.insert('users', { key: db.key(), name: 'mike', role: 'admin'  })
+  db.insert('users', { 
+    key: db.key(), 
+    name: 'mike', 
+    role: 'admin'  
+  })
   
-  db.insert('users', { key: db.key(), name: 'dave', role: 'user'  })
+  db.insert('users', { 
+    key: db.key(), 
+    name: 'dave', 
+    role: 'user'  
+  })
   
-  db.insert('users', { key: db.key(), name: 'jones', role: 'user'  })
+  db.insert('users', { 
+    key: db.key(), 
+    name: 'jones', 
+    role: 'user'  
+  })
   
+  // Commit users to database.
   await db.commit()
 
-  // create server with simple database view to the 'user' store.
-  rest.createServer().get('/users', (req, res) => {
+  // Create a Rest server.
+  const app = rest.createServer()
 
-    const query = db.query<User>('users').where(n => n.role === 'user')
+  // Setup '/users' route.
+  app.get('/users', (req, res) => {
+
+    const query = db.query('users').where(n => n.role === 'user')
     
     res.query(query)
   
   }).listen(5433)
 
 
-  // request query from server.
+  // Request query from server.
   const query = await rest.fetch('rest://localhost:5433/users').then(n => n.query<User>())
 
-  // apply order and iterate, new records pulled on each iteration.
+  // Apply order and iterate, new records pulled on each iteration.
   for await (const user of query.orderBy(n => n.name).select(n => n.name)) {
 
     console.log(user)

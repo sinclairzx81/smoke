@@ -1,9 +1,14 @@
 {
   "name": "smoke-node",
-  "version": "0.8.5",
+  "version": "0.8.6",
   "license": "MIT",
-  "description": "A framework for building WebRTC network services.",
+  "description": "A framework for building Web Server applications in the browser over WebRTC.",
   "author": "sinclairzx81",
+  "keywords": [
+    "webrtc",
+    "indexeddb",
+    "mediastream"
+  ],
   "repository": {
     "type": "git",
     "url": "https://github.com/sinclairzx81/smoke"

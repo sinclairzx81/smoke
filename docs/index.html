@@ -70,7 +70,7 @@
 				<p><a href="https://www.npmjs.com/package/smoke-node"><img src="https://badge.fury.io/js/smoke-node.svg" alt="NPM package"></a> <a href="https://travis-ci.org/sinclairzx81/smoke"><img src="https://travis-ci.org/sinclairzx81/smoke.svg?branch=master" alt="Build Status"></a></p>
 				<hr>
 				<h1 id="smoke">Smoke</h1>
-				<p>A framework for building WebRTC Web Servers</p>
+				<p>A framework for building Web Server applications in the browser over WebRTC.</p>
 				<pre><code>$ npm install smoke-<span class="hljs-keyword">node</span> <span class="hljs-title">--save</span></code></pre><pre><code class="language-typescript"><span class="hljs-keyword">import</span> { Node } <span class="hljs-keyword">from</span> <span class="hljs-string">'smoke-node'</span>
 
 <span class="hljs-keyword">const</span> node = <span class="hljs-keyword">new</span> Node()
@@ -86,11 +86,11 @@ app.listen(<span class="hljs-number">80</span>)</code></pre>
 				<pre><code class="language-typescript"><span class="hljs-keyword">const</span> text = <span class="hljs-keyword">await</span> node.rest.fetch(<span class="hljs-string">'/'</span>).then(<span class="hljs-function"><span class="hljs-params">n</span> =&gt;</span> n.text())</code></pre>
 				<p><a name="Overview"></a></p>
 				<h2 id="overview">Overview</h2>
-				<p>Smoke is an experimental peer to peer networking framework that allows Web Browsers to run as Web Server hosts over WebRTC. This library provides APIs to host both Web Socket and HTTP like web applications in a pure browser context and provides familiar APIs to consume services on remote peers as one would consume Web Servers over HTTP. </p>
-				<p>Communication between browsers operates entirely peer to peer over WebRTC with each network Node able to support a upwards of 256 concurrent connections each. New Web Server nodes may be deployed on page load, with potential to scale server infrastructure proportional to the number of users.</p>
-				<p>In addition, this library provides two storage mechanisms for persisting object and file data by leveraging IndexedDB. This allows for nodes to host file and data in much the same way as one would with a traditional file and api server.</p>
-				<p>This framework was written primarily as a tool to prototype various peer to peer networking architectures. It allows for the rapid creation of fairly sophisticated peer to peer network systems in just a few lines of code and aims to be a baseline for exploring DHT (Chord, Kademlia), IPFS and other distributed technologies using browsers and electron applications to function as peer network hosts.</p>
-				<p>This framework is offered as is to anyone who finds it of any use. Built with and tested with Chrome 72, Firefox 65 and Electron 4.0.4.</p>
+				<p>Smoke is an experimental peer to peer networking framework that allows Web Browsers to run as lightweight Web Servers that operate over WebRTC. It offers a set of APIs to run both HTTP and Web Socket server like functionality in the browser as well as a set of Web like APIs to consume content hosted in remote browsers.</p>
+				<p>Communication between browsers operates entirely peer to peer with each network Node able to support hundreds of concurrent connections. New server nodes may be deployed when users load web pages, with some potential to scale node infrastructure proportional to the number of users loading pages.</p>
+				<p>Additionally, this library provides two storage mechanisms for persisting object and file data by leveraging IndexedDB. Nodes can host file and data in much the same way as one would with a traditional file or api server, with IndexedDB offering gigabytes of storage at each node.</p>
+				<p>This framework was written primarily as a tool to prototype various peer to peer networking architectures. It aims to offer a baseline for exploring various decentralized and distributed technologies using the network and storage capabilites available in modern browsers.</p>
+				<p>This framework is offered as is to anyone who finds it of use. Built with and tested with Chrome 72, Firefox 65 and Electron 4.0.4.</p>
 				<p>Released under MIT</p>
 				<h2 id="docs">Docs</h2>
 				<ul>
@@ -285,14 +285,20 @@ writable.close()
 				<h4 id="using-buckets-with-rest">Using Buckets with Rest</h4>
 				<pre><code class="language-typescript"><span class="hljs-keyword">import</span> { Node, Bucket } <span class="hljs-keyword">from</span> <span class="hljs-string">'smoke-node'</span>
 
-<span class="hljs-keyword">const</span> bucket = <span class="hljs-keyword">new</span> Bucket(<span class="hljs-string">'files'</span>)
+<span class="hljs-comment">// Creates a IDB database named 'my-files'</span>
+<span class="hljs-keyword">const</span> bucket = <span class="hljs-keyword">new</span> Bucket(<span class="hljs-string">'my-files'</span>)
 
+<span class="hljs-comment">// Writes this content to 'index.html'</span>
 <span class="hljs-keyword">await</span> bucket.write(<span class="hljs-string">'index.html'</span>, <span class="hljs-string">'&lt;h1&gt;hello&lt;/h1&gt;'</span>)
 
+
+<span class="hljs-comment">// Creates a new network node.</span>
 <span class="hljs-keyword">const</span> node = <span class="hljs-keyword">new</span> Node()
 
+<span class="hljs-comment">// Create a new rest server.</span>
 <span class="hljs-keyword">const</span> app = node.rest.createServer()
 
+<span class="hljs-comment">// Serves the content from the bucket.</span>
 app.get(<span class="hljs-string">'/index.html'</span>, <span class="hljs-function">(<span class="hljs-params">req, res</span>) =&gt;</span> {
 
   res.readable(bucket.readable(<span class="hljs-string">'index.html'</span>))
@@ -300,11 +306,12 @@ app.get(<span class="hljs-string">'/index.html'</span>, <span class="hljs-functi
 </code></pre>
 				<p><a name="Examples"></a></p>
 				<h2 id="examples">Examples</h2>
-				<p>The following are a few examples of applications that can be implemented with this library.</p>
+				<p>The following are a few examples of applications that can be implemented with this framework.</p>
 				<p><a name="Example1"></a></p>
 				<h2 id="sockets-and-loopback">Sockets and Loopback</h2>
 				<p>The following code creates a simple socket server and listens on port 7000. It is connected to in a variety of ways.</p>
-				<pre><code class="language-typescript"><span class="hljs-keyword">import</span> { Node } <span class="hljs-keyword">from</span> <span class="hljs-string">'smoke-node'</span>
+				<pre><code class="language-typescript">
+<span class="hljs-keyword">import</span> { Node } <span class="hljs-keyword">from</span> <span class="hljs-string">'smoke-node'</span>
 
 <span class="hljs-keyword">const</span> node0 = <span class="hljs-keyword">new</span> Node() <span class="hljs-comment">// 0.0.0.1</span>
 
@@ -331,11 +338,9 @@ socket2.on(<span class="hljs-string">'error'</span>, <span class="hljs-built_in"
 				and uses the <code>hosts</code> address to make a <code>fetch</code> request to download content.</p>
 				<pre><code class="language-typescript"><span class="hljs-keyword">import</span> { Node } <span class="hljs-keyword">from</span> <span class="hljs-string">'smoke-node'</span>
 
-<span class="hljs-comment">// Server</span>
-
 (<span class="hljs-keyword">async</span> () =&gt; {
 
-  <span class="hljs-comment">// Host...</span>
+  <span class="hljs-comment">// Server</span>
 
   <span class="hljs-keyword">const</span> host = <span class="hljs-keyword">new</span> Node({  })
 
@@ -352,15 +357,9 @@ socket2.on(<span class="hljs-string">'error'</span>, <span class="hljs-built_in"
 
   <span class="hljs-comment">// Client</span>
 
-  <span class="hljs-comment">// Resolve the host address. The host may choose to publish their address to</span>
-  <span class="hljs-comment">// a remote registry or other discovery service for other nodes to find it.</span>
-  <span class="hljs-comment">// Here we simply call the hosts .address() method directly.</span>
-
-  <span class="hljs-keyword">const</span> address = <span class="hljs-keyword">await</span> host.address()
-
   <span class="hljs-keyword">const</span> node = <span class="hljs-keyword">new</span> Node({ })
 
-  <span class="hljs-keyword">const</span> response = <span class="hljs-keyword">await</span> node.rest.fetch(<span class="hljs-string">`rest://<span class="hljs-subst">${address}</span>/`</span>)
+  <span class="hljs-keyword">const</span> response = <span class="hljs-keyword">await</span> node.rest.fetch(<span class="hljs-string">`rest://<span class="hljs-subst">${await host.address()}</span>/`</span>)
 
   <span class="hljs-keyword">const</span> content = <span class="hljs-keyword">await</span> response.text()
 
@@ -383,7 +382,7 @@ socket2.on(<span class="hljs-string">'error'</span>, <span class="hljs-built_in"
 
 <span class="hljs-keyword">const</span> node2 = <span class="hljs-keyword">new</span> Node() <span class="hljs-comment">// 0.0.0.3</span>
 
-<span class="hljs-comment">// node0 - the source</span>
+<span class="hljs-comment">// node0 - The video source.</span>
 
 node0.rest.createServer().get(<span class="hljs-string">'/mediastream'</span>, <span class="hljs-function">(<span class="hljs-params">req, res</span>) =&gt;</span> {
 
@@ -393,7 +392,7 @@ node0.rest.createServer().get(<span class="hljs-string">'/mediastream'</span>, <
 
 }).listen(<span class="hljs-number">80</span>)
 
-<span class="hljs-comment">// node1 - the proxy</span>
+<span class="hljs-comment">// node1 - The video proxy.</span>
 
 <span class="hljs-keyword">const</span> app1 = node1.rest.createServer()
 
@@ -426,42 +425,59 @@ app1.get(<span class="hljs-string">'/mediastream'</span>, <span class="hljs-keyw
 				<p>The following code writes some database records and serves them on a Rest endpoint. The server filters the results (view logic) which are ordered and projected when received by the client. </p>
 				<pre><code class="language-typescript"><span class="hljs-keyword">import</span> { Node, Record, Database } <span class="hljs-keyword">from</span> <span class="hljs-string">'smoke-node'</span>
 
-
-<span class="hljs-comment">// creates a IDB database with this name.</span>
-<span class="hljs-keyword">const</span> db = <span class="hljs-keyword">new</span> Database(<span class="hljs-string">'users'</span>)
-
-<span class="hljs-keyword">interface</span> User <span class="hljs-keyword">extends</span> Record { name: <span class="hljs-built_in">string</span>, role: <span class="hljs-built_in">string</span> }
-
 (<span class="hljs-keyword">async</span> () =&gt; {
 
-  <span class="hljs-comment">// use the rest and database namespaces only.</span>
+  <span class="hljs-comment">// Use the rest namespace.</span>
   <span class="hljs-keyword">const</span> { rest } = <span class="hljs-keyword">new</span> Node()
 
-  <span class="hljs-comment">// insert some users into the database.</span>
-  db.insert(<span class="hljs-string">'users'</span>, { key: db.key(), name: <span class="hljs-string">'smith'</span>, role: <span class="hljs-string">'admin'</span> })
+  <span class="hljs-comment">// Creates a IDB database with this name.</span>
+  <span class="hljs-keyword">const</span> db = <span class="hljs-keyword">new</span> Database(<span class="hljs-string">'users'</span>)
 
-  db.insert(<span class="hljs-string">'users'</span>, { key: db.key(), name: <span class="hljs-string">'mike'</span>, role: <span class="hljs-string">'admin'</span>  })
+  <span class="hljs-comment">// Insert some users into the database.</span>
+  db.insert(<span class="hljs-string">'users'</span>, { 
+    key: db.key(), 
+    name: <span class="hljs-string">'smith'</span>, 
+    role: <span class="hljs-string">'admin'</span> 
+  })
 
-  db.insert(<span class="hljs-string">'users'</span>, { key: db.key(), name: <span class="hljs-string">'dave'</span>, role: <span class="hljs-string">'user'</span>  })
+  db.insert(<span class="hljs-string">'users'</span>, { 
+    key: db.key(), 
+    name: <span class="hljs-string">'mike'</span>, 
+    role: <span class="hljs-string">'admin'</span>  
+  })
 
-  db.insert(<span class="hljs-string">'users'</span>, { key: db.key(), name: <span class="hljs-string">'jones'</span>, role: <span class="hljs-string">'user'</span>  })
+  db.insert(<span class="hljs-string">'users'</span>, { 
+    key: db.key(), 
+    name: <span class="hljs-string">'dave'</span>, 
+    role: <span class="hljs-string">'user'</span>  
+  })
 
+  db.insert(<span class="hljs-string">'users'</span>, { 
+    key: db.key(), 
+    name: <span class="hljs-string">'jones'</span>, 
+    role: <span class="hljs-string">'user'</span>  
+  })
+
+  <span class="hljs-comment">// Commit users to database.</span>
   <span class="hljs-keyword">await</span> db.commit()
 
-  <span class="hljs-comment">// create server with simple database view to the 'user' store.</span>
-  rest.createServer().get(<span class="hljs-string">'/users'</span>, <span class="hljs-function">(<span class="hljs-params">req, res</span>) =&gt;</span> {
+  <span class="hljs-comment">// Create a Rest server.</span>
+  <span class="hljs-keyword">const</span> app = rest.createServer()
 
-    <span class="hljs-keyword">const</span> query = db.query&lt;User&gt;(<span class="hljs-string">'users'</span>).where(<span class="hljs-function"><span class="hljs-params">n</span> =&gt;</span> n.role === <span class="hljs-string">'user'</span>)
+  <span class="hljs-comment">// Setup '/users' route.</span>
+  app.get(<span class="hljs-string">'/users'</span>, <span class="hljs-function">(<span class="hljs-params">req, res</span>) =&gt;</span> {
+
+    <span class="hljs-keyword">const</span> query = db.query(<span class="hljs-string">'users'</span>).where(<span class="hljs-function"><span class="hljs-params">n</span> =&gt;</span> n.role === <span class="hljs-string">'user'</span>)
 
     res.query(query)
 
   }).listen(<span class="hljs-number">5433</span>)
 
 
-  <span class="hljs-comment">// request query from server.</span>
+  <span class="hljs-comment">// Request query from server.</span>
   <span class="hljs-keyword">const</span> query = <span class="hljs-keyword">await</span> rest.fetch(<span class="hljs-string">'rest://localhost:5433/users'</span>).then(<span class="hljs-function"><span class="hljs-params">n</span> =&gt;</span> n.query&lt;User&gt;())
 
-  <span class="hljs-comment">// apply order and iterate, new records pulled on each iteration.</span>
+  <span class="hljs-comment">// Apply order and iterate, new records pulled on each iteration.</span>
   <span class="hljs-keyword">for</span> <span class="hljs-keyword">await</span> (<span class="hljs-keyword">const</span> user of query.orderBy(<span class="hljs-function"><span class="hljs-params">n</span> =&gt;</span> n.name).select(<span class="hljs-function"><span class="hljs-params">n</span> =&gt;</span> n.name)) {
 
     <span class="hljs-built_in">console</span>.log(user)

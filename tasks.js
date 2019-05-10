@@ -27,10 +27,9 @@ export async function doc() {
   await shell('cd packages/smoke-node && npm install')
   await shell('smoke-pack run smoke-node doc')
   await shell('shx cp -r packages/smoke-node/public/doc/. ./docs/')
-  
-  // re-publish gh-pages - from master branch
-  
-  // git push origin :gh-pages
-  // git subtree push --prefix docs origin gh-pages
+  // note: run the following to re-publish:
+  //
+  // $ git push origin :gh-pages
+  // $ git subtree push --prefix docs origin gh-pages
 
 }
