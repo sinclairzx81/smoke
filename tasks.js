@@ -9,8 +9,11 @@ export async function bench() {
     shell('smoke-pack watch bench')
   ])
 }
+export async function build() {
+  await shell('smoke-pack build smoke-hub')
+  await shell('smoke-pack build smoke-node')
+}
 
-// pack
 export async function pack() {
   await shell('smoke-pack pack smoke-hub')
   await shell('smoke-pack pack smoke-node')

@@ -1,6 +1,7 @@
 import './url'
 import './querystring'
 import './database'
+import './bucket'
 import './sockets'
 import './rest'
 import './async'

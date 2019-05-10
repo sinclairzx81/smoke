@@ -8,7 +8,7 @@
 
 # Smoke
 
-A framework for building WebRTC network services.
+A framework for building WebRTC Web Servers
 
 ```
 $ npm install smoke-node --save
@@ -34,11 +34,15 @@ const text = await node.rest.fetch('/').then(n => n.text())
 <a name="Overview"></a>
 ## Overview
 
-Smoke is an experimental peer to peer networking library that allows web browsers to run as WebRTC network service hosts. This library allows one to run Web Socket and HTTP like web applications from inside Web Pages. Communication between browsers operates entirely peer to peer with each network Node able to support a upwards of 256 concurrent connections each. Nodes can be thought of as micro web service hosts run by users on page load.
+Smoke is an experimental peer to peer networking framework that allows Web Browsers to run as Web Server hosts over WebRTC. This library provides APIs to host both Web Socket and HTTP like web applications in a pure browser context and provides familiar APIs to consume services on remote peers as one would consume Web Servers over HTTP. 
 
-This framework was written primarily as a tool to prototype various peer to peer networking architectures. It allows for the rapid creation of fairly sophisticated peer to peer network systems in just a few lines of code. It is offered as is to anyone who finds it of any use.
+Communication between browsers operates entirely peer to peer over WebRTC with each network Node able to support a upwards of 256 concurrent connections each. New Web Server nodes may be deployed on page load, with potential to scale server infrastructure proportional to the number of users.
 
-Built with and tested with Chrome 72, Firefox 65 and Electron 4.0.4.
+In addition, this library provides two storage mechanisms for persisting object and file data by leveraging IndexedDB. This allows for nodes to host file and data in much the same way as one would with a traditional file and api server.
+
+This framework was written primarily as a tool to prototype various peer to peer networking architectures. It allows for the rapid creation of fairly sophisticated peer to peer network systems in just a few lines of code and aims to be a baseline for exploring DHT (Chord, Kademlia), IPFS and other distributed technologies using browsers and electron applications to function as peer network hosts.
+
+This framework is offered as is to anyone who finds it of any use. Built with and tested with Chrome 72, Firefox 65 and Electron 4.0.4.
 
 Released under MIT
 
@@ -55,6 +59,9 @@ Released under MIT
   - [Sockets](#Node-Sockets)
   - [Rest](#Node-Rest)
   - [Media](#Node-Media)
+- [Files and Data](#Files-Data)
+  - [Database](#Database)
+  - [Bucket](#Bucket)
 - [Examples](#Examples)
   - [Sockets and Loopback](#Example1) 
   - [Rest Server and Addresses](#Example2) 
@@ -176,7 +183,7 @@ Provides access to the lowest levels of the node network stack. Allows for the b
 <a name="Node-Hub"></a>
 #### Hub
 
-Provides access to the signalling hub this node is connected to. Allows one to resolve their address in the network, register a hostname (or domain name) for the Node and lookup remote addresses from hostname. This API can be used to create peer discovery mechanisms through hostname registration.
+Provides access to the signalling hub this node is connected to. Allows one to resolve their address within the signalling network.
 
 <a name="Node-Sockets"></a>
 #### Sockets
@@ -191,8 +198,107 @@ Provides an interface to create and connect to HTTP like endpoints over WebRTC. 
 <a name="Node-Media"></a>
 #### Media
  
-Provides an interface to create mediastreams from readable byte streams, such as those read from the IDB file system or received over the network. It also provides a test pattern mediastream source that can be used to test pass through without needing to setup stream sources (such as web camera feeds, etc)
+Provides an interface to create mediastreams from readable byte streams, such as those read from the IDB file system or received over the network. It also provides a test pattern mediastream source that can be used to test pass through without needing to 
+setup stream sources (such as web camera feeds, etc)
 
+
+<a name="Files-Data"></a>
+## Files and Data
+
+Smoke provides two storage mechanisms for persisting both file and object data in the browser. Both
+of these mechanisms operate over IndexedDB, with one modelled on data persistense and query (Database), and the other binary file persistence and streaming (Buckets)
+
+<a name="Database"></a>
+### Database
+
+A transactional object store over IndexedDB.
+
+```typescript
+import { Database } from 'smoke-node'
+
+// creates a new IDB database named 'my-database'
+const database = new Database('my-database')
+
+// generates a new key.
+const key = database.key()
+
+// stages a record for insertion.
+database.insert('my-table', {
+  key, foo: 1, bar: 'hello' 
+})
+
+// commits the record.
+await database.commit()
+
+// gets the record via key
+const record = await database.get('my-table', key)
+
+// gets the record via idb scan | query.
+const record = await database.query('my-table').where(n => n.key === key).first()
+```
+
+The Database type is a transactional object store built over IDB. It manages some of
+the complexities around working with IDB, offering a simplified interface for reading
+and writing object records to IDB object stores.
+
+<a name="Bucket"></a>
+### Bucket
+
+A file persistence store for IndexedDB.
+
+```typescript
+
+import { Bucket, Buffer } from 'smoke-node'
+
+// Creates a new IDB database named 'my-bucket'
+const bucket = new Bucket('my-bucket')
+
+// Writes some content to 'index.html'.
+await bucket.write('index.html', `<h1>hello world</h1>`)
+
+// Creates a writable stream and streams content to IDB.
+const writable = bucket.writable('source.dat')
+writable.write('hello')
+writable.write('world')
+writable.close()
+
+// Creates a readable for the above.
+const readable = bucket.readable('source.dat')
+for await (const buffer of readable) {
+  console.log(buffer.toString('utf8'))
+}
+
+// Pipes from 'source.dat' to 'target.dat'
+const readable = bucket.readable('source.dat')
+const writable = bucket.writable('target.dat')
+await readable.pipe(writable)
+```
+
+A Bucket is a specialized implementation of the Database type that supports streaming
+files to and from IDB. It is intended to be a source for file content transmitted over
+a peer network. The interface of the bucket shares parallels with Amazon S3 in terms of 
+general functionality. Files stored within the bucket are given simple keys, with
+hierarchical directory trees able to be emulated in much the same way as one 
+would with S3. 
+
+#### Using Buckets with Rest
+```typescript
+import { Node, Bucket } from 'smoke-node'
+
+const bucket = new Bucket('files')
+
+await bucket.write('index.html', '<h1>hello</h1>')
+
+const node = new Node()
+
+const app = node.rest.createServer()
+
+app.get('/index.html', (req, res) => {
+
+  res.readable(bucket.readable('index.html'))
+})
+
+```
 <a name="Examples"></a>
 ## Examples
 
