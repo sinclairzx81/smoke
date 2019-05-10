@@ -70,7 +70,7 @@
 				<p><a href="https://www.npmjs.com/package/smoke-node"><img src="https://badge.fury.io/js/smoke-node.svg" alt="NPM package"></a> <a href="https://travis-ci.org/sinclairzx81/smoke"><img src="https://travis-ci.org/sinclairzx81/smoke.svg?branch=master" alt="Build Status"></a></p>
 				<hr>
 				<h1 id="smoke">Smoke</h1>
-				<p>A framework for building WebRTC network services.</p>
+				<p>A framework for building WebRTC Web Servers</p>
 				<pre><code>$ npm install smoke-<span class="hljs-keyword">node</span> <span class="hljs-title">--save</span></code></pre><pre><code class="language-typescript"><span class="hljs-keyword">import</span> { Node } <span class="hljs-keyword">from</span> <span class="hljs-string">'smoke-node'</span>
 
 <span class="hljs-keyword">const</span> node = <span class="hljs-keyword">new</span> Node()
@@ -86,9 +86,11 @@ app.listen(<span class="hljs-number">80</span>)</code></pre>
 				<pre><code class="language-typescript"><span class="hljs-keyword">const</span> text = <span class="hljs-keyword">await</span> node.rest.fetch(<span class="hljs-string">'/'</span>).then(<span class="hljs-function"><span class="hljs-params">n</span> =&gt;</span> n.text())</code></pre>
 				<p><a name="Overview"></a></p>
 				<h2 id="overview">Overview</h2>
-				<p>Smoke is an experimental peer to peer networking library that allows web browsers to run as WebRTC network service hosts. This library allows one to run Web Socket and HTTP like web applications from inside Web Pages. Communication between browsers operates entirely peer to peer with each network Node able to support a upwards of 256 concurrent connections each. Nodes can be thought of as micro web service hosts run by users on page load.</p>
-				<p>This framework was written primarily as a tool to prototype various peer to peer networking architectures. It allows for the rapid creation of fairly sophisticated peer to peer network systems in just a few lines of code. It is offered as is to anyone who finds it of any use.</p>
-				<p>Built with and tested with Chrome 72, Firefox 65 and Electron 4.0.4.</p>
+				<p>Smoke is an experimental peer to peer networking framework that allows Web Browsers to run as Web Server hosts over WebRTC. This library provides APIs to host both Web Socket and HTTP like web applications in a pure browser context and provides familiar APIs to consume services on remote peers as one would consume Web Servers over HTTP. </p>
+				<p>Communication between browsers operates entirely peer to peer over WebRTC with each network Node able to support a upwards of 256 concurrent connections each. New Web Server nodes may be deployed on page load, with potential to scale server infrastructure proportional to the number of users.</p>
+				<p>In addition, this library provides two storage mechanisms for persisting object and file data by leveraging IndexedDB. This allows for nodes to host file and data in much the same way as one would with a traditional file and api server.</p>
+				<p>This framework was written primarily as a tool to prototype various peer to peer networking architectures. It allows for the rapid creation of fairly sophisticated peer to peer network systems in just a few lines of code and aims to be a baseline for exploring DHT (Chord, Kademlia), IPFS and other distributed technologies using browsers and electron applications to function as peer network hosts.</p>
+				<p>This framework is offered as is to anyone who finds it of any use. Built with and tested with Chrome 72, Firefox 65 and Electron 4.0.4.</p>
 				<p>Released under MIT</p>
 				<h2 id="docs">Docs</h2>
 				<ul>
@@ -105,6 +107,11 @@ app.listen(<span class="hljs-number">80</span>)</code></pre>
 							<li><a href="#Node-Sockets">Sockets</a></li>
 							<li><a href="#Node-Rest">Rest</a></li>
 							<li><a href="#Node-Media">Media</a></li>
+						</ul>
+					</li>
+					<li><a href="#Files-Data">Files and Data</a><ul>
+							<li><a href="#Database">Database</a></li>
+							<li><a href="#Bucket">Bucket</a></li>
 						</ul>
 					</li>
 					<li><a href="#Examples">Examples</a><ul>
@@ -199,7 +206,7 @@ socket.on(<span class="hljs-string">'message'</span>, <span class="hljs-function
 				<p>Provides access to the lowest levels of the node network stack. Allows for the binding and unbinding of ports, creating and listening for RTCDataChannels and provides direct access to the pool of RTCPeerConnections managed for this node.</p>
 				<p><a name="Node-Hub"></a></p>
 				<h4 id="hub">Hub</h4>
-				<p>Provides access to the signalling hub this node is connected to. Allows one to resolve their address in the network, register a hostname (or domain name) for the Node and lookup remote addresses from hostname. This API can be used to create peer discovery mechanisms through hostname registration.</p>
+				<p>Provides access to the signalling hub this node is connected to. Allows one to resolve their address within the signalling network.</p>
 				<p><a name="Node-Sockets"></a></p>
 				<h4 id="sockets">Sockets</h4>
 				<p>Provides an interface to create and connect to socket server endpoints within the peer network. The sockets provided by this API are designed to function as typical Web Sockets. They layer RTCDataChannel to offer predictable network timeout, address resolution and sending and receiving  message payloads that exceed RTCDataChannel limits.</p>
@@ -208,7 +215,89 @@ socket.on(<span class="hljs-string">'message'</span>, <span class="hljs-function
 				<p>Provides an interface to create and connect to HTTP like endpoints over WebRTC. The RestServer and Fetch APIs implement full request response semantics allowing for the transmission of data using familiar mechanisms used to send and receive data over HTTP. The RestServer also allows for the hosting of MediaStream content.</p>
 				<p><a name="Node-Media"></a></p>
 				<h4 id="media">Media</h4>
-				<p>Provides an interface to create mediastreams from readable byte streams, such as those read from the IDB file system or received over the network. It also provides a test pattern mediastream source that can be used to test pass through without needing to setup stream sources (such as web camera feeds, etc)</p>
+				<p>Provides an interface to create mediastreams from readable byte streams, such as those read from the IDB file system or received over the network. It also provides a test pattern mediastream source that can be used to test pass through without needing to
+				setup stream sources (such as web camera feeds, etc)</p>
+				<p><a name="Files-Data"></a></p>
+				<h2 id="files-and-data">Files and Data</h2>
+				<p>Smoke provides two storage mechanisms for persisting both file and object data in the browser. Both
+				of these mechanisms operate over IndexedDB, with one modelled on data persistense and query (Database), and the other binary file persistence and streaming (Buckets)</p>
+				<p><a name="Database"></a></p>
+				<h3 id="database">Database</h3>
+				<p>A transactional object store over IndexedDB.</p>
+				<pre><code class="language-typescript"><span class="hljs-keyword">import</span> { Database } <span class="hljs-keyword">from</span> <span class="hljs-string">'smoke-node'</span>
+
+<span class="hljs-comment">// creates a new IDB database named 'my-database'</span>
+<span class="hljs-keyword">const</span> database = <span class="hljs-keyword">new</span> Database(<span class="hljs-string">'my-database'</span>)
+
+<span class="hljs-comment">// generates a new key.</span>
+<span class="hljs-keyword">const</span> key = database.key()
+
+<span class="hljs-comment">// stages a record for insertion.</span>
+database.insert(<span class="hljs-string">'my-table'</span>, {
+  key, foo: <span class="hljs-number">1</span>, bar: <span class="hljs-string">'hello'</span> 
+})
+
+<span class="hljs-comment">// commits the record.</span>
+<span class="hljs-keyword">await</span> database.commit()
+
+<span class="hljs-comment">// gets the record via key</span>
+<span class="hljs-keyword">const</span> record = <span class="hljs-keyword">await</span> database.get(<span class="hljs-string">'my-table'</span>, key)
+
+<span class="hljs-comment">// gets the record via idb scan | query.</span>
+<span class="hljs-keyword">const</span> record = <span class="hljs-keyword">await</span> database.query(<span class="hljs-string">'my-table'</span>).where(<span class="hljs-function"><span class="hljs-params">n</span> =&gt;</span> n.key === key).first()</code></pre>
+				<p>The Database type is a transactional object store built over IDB. It manages some of
+					the complexities around working with IDB, offering a simplified interface for reading
+				and writing object records to IDB object stores.</p>
+				<p><a name="Bucket"></a></p>
+				<h3 id="bucket">Bucket</h3>
+				<p>A file persistence store for IndexedDB.</p>
+				<pre><code class="language-typescript">
+<span class="hljs-keyword">import</span> { Bucket, Buffer } <span class="hljs-keyword">from</span> <span class="hljs-string">'smoke-node'</span>
+
+<span class="hljs-comment">// Creates a new IDB database named 'my-bucket'</span>
+<span class="hljs-keyword">const</span> bucket = <span class="hljs-keyword">new</span> Bucket(<span class="hljs-string">'my-bucket'</span>)
+
+<span class="hljs-comment">// Writes some content to 'index.html'.</span>
+<span class="hljs-keyword">await</span> bucket.write(<span class="hljs-string">'index.html'</span>, <span class="hljs-string">`&lt;h1&gt;hello world&lt;/h1&gt;`</span>)
+
+<span class="hljs-comment">// Creates a writable stream and streams content to IDB.</span>
+<span class="hljs-keyword">const</span> writable = bucket.writable(<span class="hljs-string">'source.dat'</span>)
+writable.write(<span class="hljs-string">'hello'</span>)
+writable.write(<span class="hljs-string">'world'</span>)
+writable.close()
+
+<span class="hljs-comment">// Creates a readable for the above.</span>
+<span class="hljs-keyword">const</span> readable = bucket.readable(<span class="hljs-string">'source.dat'</span>)
+<span class="hljs-keyword">for</span> <span class="hljs-keyword">await</span> (<span class="hljs-keyword">const</span> buffer of readable) {
+  <span class="hljs-built_in">console</span>.log(buffer.toString(<span class="hljs-string">'utf8'</span>))
+}
+
+<span class="hljs-comment">// Pipes from 'source.dat' to 'target.dat'</span>
+<span class="hljs-keyword">const</span> readable = bucket.readable(<span class="hljs-string">'source.dat'</span>)
+<span class="hljs-keyword">const</span> writable = bucket.writable(<span class="hljs-string">'target.dat'</span>)
+<span class="hljs-keyword">await</span> readable.pipe(writable)</code></pre>
+				<p>A Bucket is a specialized implementation of the Database type that supports streaming
+					files to and from IDB. It is intended to be a source for file content transmitted over
+					a peer network. The interface of the bucket shares parallels with Amazon S3 in terms of
+					general functionality. Files stored within the bucket are given simple keys, with
+					hierarchical directory trees able to be emulated in much the same way as one
+				would with S3. </p>
+				<h4 id="using-buckets-with-rest">Using Buckets with Rest</h4>
+				<pre><code class="language-typescript"><span class="hljs-keyword">import</span> { Node, Bucket } <span class="hljs-keyword">from</span> <span class="hljs-string">'smoke-node'</span>
+
+<span class="hljs-keyword">const</span> bucket = <span class="hljs-keyword">new</span> Bucket(<span class="hljs-string">'files'</span>)
+
+<span class="hljs-keyword">await</span> bucket.write(<span class="hljs-string">'index.html'</span>, <span class="hljs-string">'&lt;h1&gt;hello&lt;/h1&gt;'</span>)
+
+<span class="hljs-keyword">const</span> node = <span class="hljs-keyword">new</span> Node()
+
+<span class="hljs-keyword">const</span> app = node.rest.createServer()
+
+app.get(<span class="hljs-string">'/index.html'</span>, <span class="hljs-function">(<span class="hljs-params">req, res</span>) =&gt;</span> {
+
+  res.readable(bucket.readable(<span class="hljs-string">'index.html'</span>))
+})
+</code></pre>
 				<p><a name="Examples"></a></p>
 				<h2 id="examples">Examples</h2>
 				<p>The following are a few examples of applications that can be implemented with this library.</p>
@@ -238,8 +327,8 @@ socket2.on(<span class="hljs-string">'error'</span>, <span class="hljs-built_in"
 				<p><a name="Example2"></a></p>
 				<h2 id="rest-server-and-addresses">Rest Server and Addresses</h2>
 				<p>The following code demonstrates setting up a node running a rest server. This code
-					setups on a <code>host</code> node that runs a small rest server. A seconary node is created
-				and uses the <code>host</code> address to make a <code>fetch</code> request.</p>
+					sets a <code>host</code> node that runs a small rest server. A seconary node is then created
+				and uses the <code>hosts</code> address to make a <code>fetch</code> request to download content.</p>
 				<pre><code class="language-typescript"><span class="hljs-keyword">import</span> { Node } <span class="hljs-keyword">from</span> <span class="hljs-string">'smoke-node'</span>
 
 <span class="hljs-comment">// Server</span>
@@ -350,10 +439,13 @@ app1.get(<span class="hljs-string">'/mediastream'</span>, <span class="hljs-keyw
 
   <span class="hljs-comment">// insert some users into the database.</span>
   db.insert(<span class="hljs-string">'users'</span>, { key: db.key(), name: <span class="hljs-string">'smith'</span>, role: <span class="hljs-string">'admin'</span> })
+
   db.insert(<span class="hljs-string">'users'</span>, { key: db.key(), name: <span class="hljs-string">'mike'</span>, role: <span class="hljs-string">'admin'</span>  })
+
   db.insert(<span class="hljs-string">'users'</span>, { key: db.key(), name: <span class="hljs-string">'dave'</span>, role: <span class="hljs-string">'user'</span>  })
-  db.insert(<span class="hljs-string">'users'</span>, { key: db.key(), name: <span class="hljs-string">'alice'</span>, role: <span class="hljs-string">'user'</span>  })
+
   db.insert(<span class="hljs-string">'users'</span>, { key: db.key(), name: <span class="hljs-string">'jones'</span>, role: <span class="hljs-string">'user'</span>  })
+
   <span class="hljs-keyword">await</span> db.commit()
 
   <span class="hljs-comment">// create server with simple database view to the 'user' store.</span>
@@ -404,6 +496,27 @@ app1.get(<span class="hljs-string">'/mediastream'</span>, <span class="hljs-keyw
 					</li>
 					<li class=" tsd-kind-external-module tsd-is-external">
 						<a href="modules/_async_semaphore_.html">"async/semaphore"</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="modules/_bucket_bucket_.html">"bucket/bucket"</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="modules/_bucket_constants_.html">"bucket/constants"</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="modules/_bucket_errors_.html">"bucket/errors"</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="modules/_bucket_index_.html">"bucket/index"</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="modules/_bucket_reader_.html">"bucket/reader"</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="modules/_bucket_records_.html">"bucket/records"</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="modules/_bucket_writer_.html">"bucket/writer"</a>
 					</li>
 					<li class=" tsd-kind-external-module tsd-is-external">
 						<a href="modules/_buffer_base64_.html">"buffer/base64"</a>
