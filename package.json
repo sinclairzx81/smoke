@@ -29,7 +29,7 @@
   "homepage": "https://github.com/sinclairzx81/smoke#readme",
   "devDependencies": {
     "smoke-pack": "^0.8.0",
-    "smoke-task": "^1.0.5"
+    "smoke-task": "^1.0.7"
   },
   "dependencies": {}
 }
