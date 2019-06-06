@@ -7,7 +7,7 @@
     "clean": "smoke-task clean",
     "bench": "smoke-task bench",
     "test": "smoke-task test",
-    "pack": "smoke-task pack",
+    "pack": "smoke-pack pack smoke-hub | smoke-pack pack smoke-node",
     "doc": "smoke-task doc"
   },
   "repository": {

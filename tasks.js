@@ -1,3 +1,5 @@
+shell_options({ trace: true })
+
 export async function clean() {
   await shell('smoke-pack clean')
   await drop('node_modules')
@@ -12,11 +14,6 @@ export async function bench() {
 export async function build() {
   await shell('smoke-pack build smoke-hub')
   await shell('smoke-pack build smoke-node')
-}
-
-export async function pack() {
-  await shell('smoke-pack pack smoke-hub')
-  await shell('smoke-pack pack smoke-node')
 }
 
 export async function test() {
