@@ -28,6 +28,7 @@
   },
   "homepage": "https://github.com/sinclairzx81/smoke#readme",
   "devDependencies": {
+    "shx": "^0.3.2",
     "smoke-pack": "^0.8.0",
     "smoke-task": "^1.0.7"
   },

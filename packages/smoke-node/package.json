@@ -1,6 +1,6 @@
 {
   "name": "smoke-node",
-  "version": "0.8.6",
+  "version": "0.8.7",
   "license": "MIT",
   "description": "A framework for building Web Server applications in the browser over WebRTC.",
   "author": "sinclairzx81",

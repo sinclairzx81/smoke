@@ -49,6 +49,7 @@ Released under MIT
 ## Docs
 
 - [Formal](https://sinclairzx81.github.io/smoke/index.html)
+- [Build](#Build)
 - [Hubs](#Hubs)
   - [PageHub](#PageHub)
   - [NetworkHub](#NetworkHub)
@@ -68,6 +69,20 @@ Released under MIT
   - [MediaStream and Media Proxy](#Example3) 
   - [Database and Network Query](#Example4) 
 
+## Build
+
+This repository contains both Node and Hub projects as well as a Workbench project that can be used to test the smoke client and server ends.
+
+To build locally.
+
+```bash
+$ git clone git@github.com:sinclairzx81/smoke.git
+$ cd ./smoke
+$ npm install
+# start node | hub | workbench in watch mode.
+$ npm run bench 
+```
+This will start the workbench web application running Node client is accessible on `http://localhost:5000` and the Hub signalling server is running on `http://localhost:5001`.
 <a name="Hubs"></a>
 ## Hubs
 
