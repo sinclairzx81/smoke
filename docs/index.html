@@ -124,15 +124,16 @@ app.listen(<span class="hljs-number">80</span>)</code></pre>
 					</li>
 				</ul>
 				<h2 id="build">Build</h2>
-				<p>This repository contains both Node and Hub projects as well as a Workbench project that can be used to test the smoke client and server ends.</p>
+				<p>This repository contains both Node and Hub projects as well as a Workbench project that can be used to test and script around the smoke Node and Hub.</p>
 				<p>To build locally.</p>
 				<pre><code class="language-bash">$ git <span class="hljs-built_in">clone</span> git@github.com:sinclairzx81/smoke.git
 $ <span class="hljs-built_in">cd</span> ./smoke
 $ npm install
+
 <span class="hljs-comment"># start node | hub | workbench in watch mode.</span>
 $ npm run bench </code></pre>
-				<p>This will start the workbench web application running Node client is accessible on <code>http://localhost:5000</code> and the Hub signalling server is running on <code>http://localhost:5001</code>.
-				<a name="Hubs"></a></p>
+				<p>This will start the workbench web app running a smoke Node. The workbench is accessible on <code>http://localhost:5000</code> and the Hub signalling server is accessible on <code>http://localhost:5001</code>.</p>
+				<p><a name="Hubs"></a></p>
 				<h2 id="hubs">Hubs</h2>
 				<p>A Hub is the name given to Smoke&#39;s WebRTC signalling infrastructure. It is a forwarding channel that Nodes use to relay messages to other Nodes (primarily WebRTC SDP and Candidate exchange messages). A Hub can loosely be thought of as a network Router or sorts. All Nodes connect to at least one Hub, and by doing so, the Node will be joining a network of other Nodes also connected to that Hub.</p>
 				<p align="center">

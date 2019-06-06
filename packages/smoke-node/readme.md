@@ -71,7 +71,7 @@ Released under MIT
 
 ## Build
 
-This repository contains both Node and Hub projects as well as a Workbench project that can be used to test the smoke client and server ends.
+This repository contains both Node and Hub projects as well as a Workbench project that can be used to test and script around the smoke Node and Hub.
 
 To build locally.
 
@@ -79,10 +79,13 @@ To build locally.
 $ git clone git@github.com:sinclairzx81/smoke.git
 $ cd ./smoke
 $ npm install
+
 # start node | hub | workbench in watch mode.
 $ npm run bench 
 ```
-This will start the workbench web application running Node client is accessible on `http://localhost:5000` and the Hub signalling server is running on `http://localhost:5001`.
+
+This will start the workbench web app running a smoke Node. The workbench is accessible on `http://localhost:5000` and the Hub signalling server is accessible on `http://localhost:5001`.
+
 <a name="Hubs"></a>
 ## Hubs
 
