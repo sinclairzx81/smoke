@@ -1,4 +1,5 @@
 node_modules
+build
 
 # workbench
 packages/bench/package-lock.json

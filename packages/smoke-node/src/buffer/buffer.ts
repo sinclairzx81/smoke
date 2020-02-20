@@ -720,7 +720,7 @@ export class Buffer extends Uint8Array {
       if (args[3] !== undefined && typeof args[3] !== 'string') {
         throw new TypeError('encoding must be a string')
       }
-      if (typeof args[3] === 'string' && !Buffer.isEncoding(args[3])) {
+      if (typeof args[3] === 'string' && !Buffer.isEncoding(args[3] as Encoding)) {
         throw new TypeError('Unknown encoding: ' + args[3])
       }
       if (args[0].length === 1) {
@@ -1631,7 +1631,7 @@ export class Buffer extends Uint8Array {
       return Buffer.fromString(args[0], args[1])
     }
     if (ArrayBuffer.isView(args[0])) {
-      return Buffer.fromArrayLike(args[0])
+      return Buffer.fromArrayLike(args[0] as Uint8Array)
     }
     if (args[0] == null) {
       throw TypeError(
