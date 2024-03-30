@@ -26,9 +26,16 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-import { Close } from './close.mjs'
+import { Close, CloseSync } from './close.mjs'
 
+/** Represents a resource that can write asynchronously */
 export interface Write<T = unknown> extends Close {
   write(value: T): Promise<void>
   close(): Promise<void>
+}
+
+/** Represents a resource that can write synchronously */
+export interface WriteSync<T = unknown> extends CloseSync {
+  write(value: T): void
+  close(): void
 }

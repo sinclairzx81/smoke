@@ -1,9 +1,10 @@
 {
   "name": "@sinclair/smoke",
-  "version": "0.8.0",
-  "description": "Run Micro Services in Web Browsers over WebRTC",
+  "version": "0.8.1",
+  "description": "Run Web Servers in Web Browsers over WebRTC",
   "type": "module",
-  "main": "index.mjs",
+  "main": "./index.mjs",
+  "module": "./index.mjs",
   "scripts": {
     "start": "hammer task start",
     "drift": "hammer task drift",

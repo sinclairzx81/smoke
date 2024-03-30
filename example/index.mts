@@ -1,4 +1,4 @@
-import { Network } from '@sinclair/smoke'
+import { Network, Stream } from '@sinclair/smoke'
 
 const { Http } = new Network()
 

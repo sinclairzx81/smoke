@@ -26,8 +26,21 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-export * from './frames/index.mjs'
-export * from './iterator/index.mjs'
-export * from './close.mjs'
-export * from './read.mjs'
-export * from './write.mjs'
+import { Read, ReadSync } from '../read.mjs'
+
+/** Returns an asynchronous iterator for the given Read<T> */
+export async function* toAsyncIterator<T>(read: Read<T>): AsyncIterableIterator<T> {
+  while (true) {
+    const next = await read.read()
+    if (next === null) return
+    yield next
+  }
+}
+/** Returns an iterator for the given ReadSync<T> */
+export function* toIterator<T>(read: ReadSync<T>): IterableIterator<T> {
+  while (true) {
+    const next = read.read()
+    if (next === null) return
+    yield next
+  }
+}

@@ -26,9 +26,15 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-import { Close } from './close.mjs'
+import { Close, CloseSync } from './close.mjs'
 
+/** Represents a resource that can be read asynchronously */
 export interface Read<T = unknown> extends Close {
   [Symbol.asyncIterator](): AsyncIterableIterator<T>
   read(): Promise<T | null>
+}
+/** Represents a resource that can be read syncronously */
+export interface ReadSync<T = unknown> extends CloseSync {
+  [Symbol.iterator](): IterableIterator<T>
+  read(): T | null
 }

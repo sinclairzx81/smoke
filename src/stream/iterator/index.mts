@@ -26,13 +26,4 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-import { Read } from './read.mjs'
-
-/** Many types  */
-export async function* thisIterator<T>(read: Read<T>): AsyncIterableIterator<T> {
-  while (true) {
-    const next = await read.read()
-    if (next === null) return
-    yield next
-  }
-}
+export * from './iterator.mjs'
