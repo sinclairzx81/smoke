@@ -31,9 +31,9 @@ import { EventHandler } from './handler.mjs'
 import { Event } from './event.mjs'
 
 export class Events<T extends Record<string, any> = Record<string, any>> {
-  readonly #events: Map<string, Event<any>>
+  readonly #events: Map<string, Event>
   constructor() {
-    this.#events = new Map<string, Event<any>>()
+    this.#events = new Map<string, Event>()
   }
   /** Subscribes to an event */
   public on<K extends keyof T>(name: K, handler: EventHandler<T[K]>): EventListener {

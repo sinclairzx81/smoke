@@ -1,9 +1,29 @@
-import { Network, Stream } from '@sinclair/smoke'
+import { Network, FileSystem } from '@sinclair/smoke'
+
+// ------------------------------------------------------------------
+// Store Static Files
+// ------------------------------------------------------------------
+
+const Fs = await FileSystem.open('filesystem')
+
+await Fs.writeText('/index.html', '<html>hello world</html>')
+
+// ------------------------------------------------------------------
+// Serve Static Files
+// ------------------------------------------------------------------
 
 const { Http } = new Network()
 
-Http.listen({ port: 5000 }, () => new Response('hello webrtc'))
+Http.listen({ port: 5000 }, (request) => {
+  const { pathname } = new URL(request.url)
 
-const text = await Http.fetch('http://localhost:5000').then((x) => x.text())
+  return new Response(Fs.readable(pathname))
+})
 
-console.log(text)
+// ------------------------------------------------------------------
+// Fetch
+// ------------------------------------------------------------------
+
+const html = await Http.fetch('http://localhost:5000/index.html').then((x) => x.text())
+
+console.log(html)
