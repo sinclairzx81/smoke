@@ -62,8 +62,10 @@ export interface HttpListenerOptions {
 export class HttpListener implements Dispose.Dispose {
   readonly #listener: Net.NetListener
   readonly #accept: HttpListenerAcceptCallback
+  readonly #options: HttpListenerOptions
   constructor(net: Net.NetModule, options: HttpListenerOptions, accept: HttpListenerAcceptCallback) {
     this.#listener = net.listen({ port: options.port }, (socket) => this.#onSocket(socket))
+    this.#options = options
     this.#accept = accept
   }
   // ----------------------------------------------------------------

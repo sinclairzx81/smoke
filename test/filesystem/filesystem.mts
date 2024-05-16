@@ -12,6 +12,11 @@ Test.describe('Fs:FileSystem', () => {
   Test.after(async () => {
     await FileSystem.remove(root)
   })
+  async function clean() {
+    for (const entry of await fs.readdir('/')) {
+      await fs.delete(entry)
+    }
+  }
   // ----------------------------------------------------------------
   // Write
   // ----------------------------------------------------------------
@@ -248,5 +253,145 @@ Test.describe('Fs:FileSystem', () => {
     await fs.write(forward, Buffer.alloc(5))
     const read = await fs.read(back)
     Assert.isTrue(read.length === 5)
+  })
+  // ----------------------------------------------------------------
+  // Rename
+  // ----------------------------------------------------------------
+  Test.it('Should rename directory (root)', async () => {
+    const sourcePath = `/${newname()}`
+    const newName = newname()
+    const targetPath = `/${newName}`
+    await fs.mkdir(sourcePath)
+    await fs.rename(sourcePath, newName)
+    Assert.isFalse(await fs.exists(sourcePath))
+    Assert.isTrue(await fs.exists(targetPath))
+  })
+  Test.it('Should rename directory (deep)', async () => {
+    const sourcePath = `/foo/bar/baz/${newname()}`
+    const newName = newname()
+    const targetPath = `/foo/bar/baz/${newName}`
+    await fs.mkdir(sourcePath)
+    await fs.rename(sourcePath, newName)
+    Assert.isFalse(await fs.exists(sourcePath))
+    Assert.isTrue(await fs.exists(targetPath))
+  })
+  Test.it('Should rename file (root)', async () => {
+    const sourcePath = `/${newname()}`
+    const newName = newname()
+    const targetPath = `/${newName}`
+    const buffer = Buffer.random(2_000_000)
+    await fs.write(sourcePath, buffer)
+    await fs.rename(sourcePath, newName)
+    Assert.isFalse(await fs.exists(sourcePath))
+    Assert.isTrue(await fs.exists(targetPath))
+    Assert.isEqual(buffer, await fs.read(targetPath))
+  })
+  Test.it('Should rename file (deep)', async () => {
+    const sourcePath = `/foo/bar/baz/${newname()}`
+    const newName = newname()
+    const targetPath = `/foo/bar/baz/${newName}`
+    const buffer = Buffer.random(2_000_000)
+    await fs.write(sourcePath, buffer)
+    await fs.rename(sourcePath, newName)
+    Assert.isFalse(await fs.exists(sourcePath))
+    Assert.isTrue(await fs.exists(targetPath))
+    Assert.isEqual(buffer, await fs.read(targetPath))
+  })
+  Test.it('Should throw on rename when target path exists', async () => {
+    const sourcePath = `/foo/bar/baz/${newname()}`
+    const newName = newname()
+    const targetPath = `/foo/bar/baz/${newName}`
+    const content = newname()
+    await fs.writeText(sourcePath, content)
+    await fs.writeText(targetPath, content)
+    await Assert.shouldThrowAsync(() => fs.rename(sourcePath, newName))
+  })
+  Test.it('Should throw when renaming root', async () => {
+    await Assert.shouldThrowAsync(() => fs.rename('/', '/x'))
+  })
+  // ----------------------------------------------------------------
+  // Copy
+  // ----------------------------------------------------------------
+  Test.it('Should copy file from root', async () => {
+    const sourcePath = `/${newname()}.txt`
+    const targetPath = `/${newname()}`
+    const outputPath = Path.join(targetPath, Path.basename(sourcePath))
+    const buffer = Buffer.random(2_000_000)
+    await fs.write(sourcePath, buffer)
+    await fs.copy(sourcePath, targetPath)
+    Assert.isEqual(buffer, await fs.read(outputPath))
+  })
+  Test.it('Should copy file from sub directory to sub directory', async () => {
+    const sourcePath = `/x/${newname()}.txt`
+    const targetPath = `/y`
+    const outputPath = Path.join(targetPath, Path.basename(sourcePath))
+    const buffer = Buffer.random(2_000_000)
+    await fs.write(sourcePath, buffer)
+    await fs.copy(sourcePath, targetPath)
+    Assert.isEqual(buffer, await fs.read(outputPath))
+  })
+  Test.it('Should copy sub directory to sub directory', async () => {
+    await clean()
+    const buffer = Buffer.random(2_000_000)
+    await fs.write('/x/y/z/file.txt', buffer)
+    await fs.copy('/x', '/w')
+    Assert.isEqual(await fs.read('/w/x/y/z/file.txt'), buffer)
+    Assert.isEqual((await fs.stat('/w/x/y/z')).type, 'directory')
+    Assert.isEqual((await fs.stat('/w/x/y')).type, 'directory')
+    Assert.isEqual((await fs.stat('/w/x')).type, 'directory')
+    Assert.isEqual((await fs.stat('/w')).type, 'directory')
+  })
+  Test.it('Should copy sub directory to root', async () => {
+    await clean()
+    const buffer = Buffer.random(2_000_000)
+    await fs.write('/x/y/z/file.txt', buffer)
+    await fs.copy('/x/y', '/')
+    Assert.isEqual(await fs.read('/y/z/file.txt'), buffer)
+    Assert.isEqual((await fs.stat('/y/z')).type, 'directory')
+    Assert.isEqual((await fs.stat('/y')).type, 'directory')
+  })
+  Test.it('Should throw on copy duplicate (root)', async () => {
+    const sourcePath = `/${newname()}.txt`
+    const targetPath = `/`
+    const buffer = Buffer.alloc(0)
+    await fs.write(sourcePath, buffer)
+    await Assert.shouldThrowAsync(() => fs.copy(sourcePath, targetPath))
+  })
+  Test.it('Should throw on copy duplicate (deep)', async () => {
+    const sourcePath = `/a/b/c/${newname()}.txt`
+    const targetPath = `/a/b/c`
+    const buffer = Buffer.alloc(0)
+    await fs.write(sourcePath, buffer)
+    await Assert.shouldThrowAsync(() => fs.copy(sourcePath, targetPath))
+  })
+  // ----------------------------------------------------------------
+  // Move
+  // ----------------------------------------------------------------
+  Test.it('Should move file from sub directory to sub directory', async () => {
+    await clean()
+    const buffer = Buffer.random(2_000_000)
+    await fs.write('/x/file', buffer)
+    await fs.move('/x/file', '/y')
+    Assert.isFalse(await fs.exists('/x/file'))
+    Assert.isTrue(await fs.exists('/y/file'))
+    Assert.isEqual(await fs.read('/y/file'), buffer)
+  })
+  Test.it('Should move file from sub directory to root', async () => {
+    await clean()
+    const buffer = Buffer.random(2_000_000)
+    await fs.write('/x/file', buffer)
+    await fs.move('/x/file', '/')
+    Assert.isTrue(await fs.exists('/x'))
+    Assert.isFalse(await fs.exists('/x/file'))
+    Assert.isEqual(await fs.read('/file'), buffer)
+  })
+  Test.it('Should move file form sub directory to sub directory', async () => {
+    await clean()
+    await fs.mkdir('/x/folder/inner')
+    await fs.move('/x/folder', '/y')
+    Assert.isFalse(await fs.exists('/x/folder'))
+    Assert.isFalse(await fs.exists('/x/folder/inner'))
+    Assert.isTrue(await fs.exists('/y/folder'))
+    Assert.isTrue(await fs.exists('/y/folder/inner'))
   })
 })

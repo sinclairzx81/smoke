@@ -38,7 +38,8 @@ export class ObjectStore<T> {
   }
   /** Adds or updates a record in store with the given value and key. If the store uses in-line keys and key is specified a "DataError" DOMException will be thrown. If put() is used, any existing record with the key will be replaced. If add() is used, and if a record with the key already exists the request will fail, with request's error set to a "ConstraintError" DOMException. If successful, request's result will be the record's key. */
   public async add(value: T, key?: IDBValidKey | undefined) {
-    return await Request(this.objectStore.add(value, key))
+    const request = this.objectStore.add(value, key)
+    return await Request(request)
   }
   /** Retrieves the number of records matching the given key or key range in query. If successful, request's result will be the count. */
   public async count(query?: IDBValidKey | IDBKeyRange | undefined) {

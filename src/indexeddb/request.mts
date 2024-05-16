@@ -28,10 +28,20 @@ THE SOFTWARE.
 
 export type Result<T> = T extends IDBRequest<infer U> ? U : never
 
+/** Checks the event for interior DOMExpection */
+function hasError(event: Event): event is Event & { target: { error: DOMException } } {
+  return event.target !== null && 'error' in event.target && typeof event.target.error === 'object' && event.target.error !== null && typeof event.target.toString === 'function'
+}
 /** Remaps a IDB Request into a Promise<T> */
 export function Request<T extends IDBRequest<any>>(request: T): Promise<Result<T>> {
   return new Promise((resolve, reject) => {
     request.addEventListener('success', () => resolve(request.result))
-    request.addEventListener('error', (event) => reject(event))
+    // prettier-ignore
+    request.addEventListener('error', (event) => {
+      event.stopPropagation()
+      return hasError(event)
+        ? reject(new Error(event.target.error.toString()))
+        : reject(event)
+    })
   })
 }

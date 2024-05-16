@@ -80,6 +80,7 @@ Licence MIT
   - [Pattern](#Media-Pattern)
 - [FileSystem](#FileSystem)
   - [Open](#FileSystem-Open)
+  - [Listen](#FileSystem-Listen)
   - [Stat](#FileSystem-Stat)
   - [Exists](#FileSystem-Exists)
   - [MkDir](#FileSystem-Mkdir)
@@ -88,8 +89,10 @@ Licence MIT
   - [Read](#FileSystem-Read)
   - [Write](#FileSystem-Write)
   - [Delete](#FileSystem-Delete)
+  - [Rename](#FileSystem-Rename)
+  - [Copy](#FileSystem-Copy)
+  - [Move](#FileSystem-Move)
 - [Contribute](#Contribute)
-
 
 
 <a name="Network"></a>
@@ -310,6 +313,16 @@ import { FileSystem } from '@sinclair/smoke'
 const Fs = await FileSystem.open('<database-name>')
 ```
 
+<a name="FileSystem-Listen"></a>
+### Listen
+
+Use the listen function to receive events for file and directory paths.
+
+```typescript
+Fs.listen('/dir', event => console.log(event))
+```
+
+
 <a name="FileSystem-Stat"></a>
 ### Stat
 
@@ -386,6 +399,39 @@ Use the delete function to delete a file or directory. Delete is recursive.
 
 ```typescript
 await Fs.delete('/path/file.txt')
+```
+
+<a name="FileSystem-Rename"></a>
+### Rename
+
+Use the rename function to rename a file or directory.
+
+```typescript
+await Fs.writeText('/path/fileA.txt', '...')
+
+await Fs.rename('/path/fileA.txt', 'fileB.txt')
+```
+
+<a name="FileSystem-Copy"></a>
+### Copy
+
+Use the copy function to copy a file or directory into a target directory.
+
+```typescript
+await Fs.writeText('/path/fileA.txt', '...')
+
+await Fs.copy('/path/fileA.txt', '/backup')
+```
+
+<a name="FileSystem-Move"></a>
+### Move
+
+Use the move function to move a file or directory into a target directory.
+
+```typescript
+await Fs.writeText('/path/fileA.txt', '...')
+
+await Fs.move('/path/fileA.txt', '/backup')
 ```
 
 
