@@ -32,7 +32,7 @@ import * as Buffer from '../buffer/index.mjs'
 import * as Events from '../events/index.mjs'
 import * as Path from '../path/index.mjs'
 import * as Util from './util.mjs'
-import { FileSystemEvents, FileSystemEvent } from './events.mjs'
+import * as FsEvents from './events.mjs'
 import { Stat } from './stat.mjs'
 
 interface FolderRecord {
@@ -51,14 +51,21 @@ interface BlobRecord {
 }
 export class FileSystem implements Dispose.Dispose {
   readonly #database: IndexedDb.Database
-  readonly #events: FileSystemEvents
+  readonly #events: FsEvents.FileSystemEvents
   readonly #blobsize: number
   readonly #readsize: number
   constructor(database: IndexedDb.Database) {
-    this.#events = new FileSystemEvents(database.name)
+    this.#events = new FsEvents.FileSystemEvents(database.name)
     this.#database = database
     this.#blobsize = 1_000_000
     this.#readsize = 65536
+  }
+  // ----------------------------------------------------------------
+  // Properties
+  // ----------------------------------------------------------------
+  /** Gets the backing IndexedDB database name */
+  public get name() {
+    return this.#database.name
   }
   // ----------------------------------------------------------------
   // Dispose
@@ -75,7 +82,7 @@ export class FileSystem implements Dispose.Dispose {
   // Listen
   // ----------------------------------------------------------------
   /** Listens for file system events on the given path. */
-  public listen(path: string, handler: Events.EventHandler<FileSystemEvent>): Events.EventListener {
+  public listen(path: string, handler: Events.EventHandler<FsEvents.FileSystemEvent>): Events.EventListener {
     return this.#events.on(path, handler)
   }
   // ----------------------------------------------------------------
@@ -115,9 +122,12 @@ export class FileSystem implements Dispose.Dispose {
     let blob = new Blob([])
     const [folderPath, filePath] = this.#resolvePath(path)
     return new WritableStream<Uint8Array>({
-      start: async () => {
-        await this.#createFoldersForPath(path)
+      start: async (controller) => {
+        const error = await this.#assertCanWriteFile(filePath).catch((error: Error) => error)
+        if (error !== undefined) return controller.error(error)
         await this.#deleteFileIfExists(path)
+        await this.#createDependentFolderPaths(path)
+
         const transaction = this.#database.transaction(['file'], 'readwrite')
         const fileStore = transaction.objectStore<FileRecord>('file')
         await fileStore.add({ parent: folderPath, path: filePath, created: Date.now() })
@@ -148,13 +158,14 @@ export class FileSystem implements Dispose.Dispose {
     })
   }
   // ----------------------------------------------------------------
-  // MkDir
+  // Mkdir
   // ----------------------------------------------------------------
   /** Creates a directory at the given path. If the directory already exists no action is taken. */
   public async mkdir(path: string): Promise<void> {
     if (await this.#isFolderExists(path)) return
+    await this.#assertCanMakeFolder(path)
     const [folderPath, filePath] = this.#resolvePath(path)
-    await this.#createFoldersForPath(path)
+    await this.#createDependentFolderPaths(path)
     const transaction = this.#database.transaction(['folder'], 'readwrite')
     const folderStore = transaction.objectStore<FolderRecord>('folder')
     await folderStore.add({ path: filePath, parent: folderPath, created: Date.now() })
@@ -162,7 +173,7 @@ export class FileSystem implements Dispose.Dispose {
     this.#sendCreated(filePath)
   }
   // ----------------------------------------------------------------
-  // ReadDir
+  // Readdir
   // ----------------------------------------------------------------
   /** Reads the contents of a directory */
   public async readdir(path: string): Promise<string[]> {
@@ -388,7 +399,6 @@ export class FileSystem implements Dispose.Dispose {
     // copy source file to target
     const fileRecord = await fileStore.get(sourcePath)
     this.#assertDefined(fileRecord)
-
     await fileStore.add({ parent: fileRecord.parent, path: targetPath, created: Date.now() })
     this.#sendCreated(targetPath)
     // copy source blob to target
@@ -484,24 +494,27 @@ export class FileSystem implements Dispose.Dispose {
     }
     await fileStore.delete(filePath)
     transaction.commit()
+    this.#sendDeleted(path)
   }
-  async #createFoldersForPath(path: string) {
-    function getFolderPaths(path: string): string[] {
-      path = path.startsWith('/') ? path : `/${path}`
-      const paths: string[] = []
-      while (path !== '/') {
-        path = Path.dirname(path)
-        paths.push(path)
-      }
-      return paths.reverse()
+  #resolveDependentFolderPaths(path: string): string[] {
+    path = path.startsWith('/') ? path : `/${path}`
+    const paths: string[] = []
+    while (path !== '/') {
+      path = Path.dirname(path)
+      paths.unshift(path)
     }
-    const transaction = this.#database.transaction(['folder', 'file'], 'readwrite')
+    return paths
+  }
+  async #createDependentFolderPaths(path: string) {
+    const folderPaths = this.#resolveDependentFolderPaths(path)
+    for (const folderPath of folderPaths) {
+      await this.#assertCanMakeFolder(folderPath)
+    }
+    const transaction = this.#database.transaction(['folder'], 'readwrite')
     const folderStore = transaction.objectStore<FolderRecord>('folder')
-    const fileStore = transaction.objectStore<FileRecord>('file')
-    const folderPaths = await folderStore.getAllKeys()
-    for (const folderPath of getFolderPaths(path)) {
-      if (folderPaths.includes(folderPath)) continue
-      if ((await fileStore.getKey(folderPath)) !== undefined) throw Error('Cannot create directory under file path')
+    for (const folderPath of folderPaths) {
+      const existing = await folderStore.get(folderPath)
+      if (existing) continue
       await folderStore.add({ parent: Path.dirname(folderPath), path: folderPath, created: Date.now() })
       this.#sendCreated(folderPath)
     }
@@ -527,6 +540,20 @@ export class FileSystem implements Dispose.Dispose {
   }
   #assertNotRoot(operation: string, path: string) {
     if (path === '/') this.#throw(`Cannot perform ${operation} operation on root`)
+  }
+  async #assertCanMakeFolder(path: string): Promise<void> {
+    const exists = await this.exists(path)
+    if (!exists) return
+    const stat = await this.stat(path)
+    if (stat.type === 'directory') return
+    this.#throw(`Cannot make directory '${path}' because a file exists at this location`)
+  }
+  async #assertCanWriteFile(path: string): Promise<void> {
+    const exists = await this.exists(path)
+    if (!exists) return
+    const stat = await this.stat(path)
+    if (stat.type === 'file') return
+    this.#throw(`Cannot write file '${path}' because a directory exists at this location`)
   }
   async #assertPathExists(path: string) {
     const exists = await this.exists(path)
