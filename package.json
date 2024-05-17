@@ -1,6 +1,6 @@
 {
   "name": "@sinclair/smoke",
-  "version": "0.8.2",
+  "version": "0.8.3",
   "description": "Run Web Servers in Web Browsers over WebRTC",
   "type": "module",
   "main": "./index.mjs",
