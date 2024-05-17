@@ -80,11 +80,10 @@ Licence MIT
   - [Pattern](#Media-Pattern)
 - [FileSystem](#FileSystem)
   - [Open](#FileSystem-Open)
-  - [Listen](#FileSystem-Listen)
   - [Stat](#FileSystem-Stat)
   - [Exists](#FileSystem-Exists)
-  - [MkDir](#FileSystem-Mkdir)
-  - [ReadDir](#FileSystem-ReadDir)
+  - [Mkdir](#FileSystem-Mkdir)
+  - [Readdir](#FileSystem-Readdir)
   - [Blob](#FileYstem-Blob)
   - [Read](#FileSystem-Read)
   - [Write](#FileSystem-Write)
@@ -92,6 +91,7 @@ Licence MIT
   - [Rename](#FileSystem-Rename)
   - [Copy](#FileSystem-Copy)
   - [Move](#FileSystem-Move)
+  - [Watch](#FileSystem-Watch)
 - [Contribute](#Contribute)
 
 
@@ -300,29 +300,18 @@ const sender = Media.send({ port: 5000 }, pattern.mediastream)
 <a name="FileSystem"></a>
 ## FileSystem
 
-Smoke provides a hierarchical file system capable of persisting large files within the browser. The file system is backed by IndexedDB and supports read, write, delete, directory enumeration and streaming.
+Smoke includes a hierarchical file system built on top of IndexedDB which can store large binary and text files within the browser. The file system has support for streaming read and write, directory enumeration, copy, move, rename as well as file and directory watch events. It is built to act as a static file store for network servers but can be used as a general purpose file system for storing large files in the browser.
 
 <a name="FileSystem-Open"></a>
 ### Open
 
-Use the open function to open a FileSystem. The name passed to this function corrosponds to a IndexedDB database. A new IndexedDB database will be provisioned if one does not already exist.
+Use the open function to open a file system with the given database name. If the database does not exist it is created.
 
 ```typescript
 import { FileSystem } from '@sinclair/smoke'
 
 const Fs = await FileSystem.open('<database-name>')
 ```
-
-<a name="FileSystem-Listen"></a>
-### Listen
-
-Use the listen function to receive events for file and directory paths.
-
-```typescript
-Fs.listen('/dir', event => console.log(event))
-```
-
-
 <a name="FileSystem-Stat"></a>
 ### Stat
 
@@ -341,8 +330,8 @@ Use the exists function to check a path exists.
 const exists = await Fs.exists('/path/file.txt')
 ```
 
-<a name="FileSystem-MkDir"></a>
-### MkDir
+<a name="FileSystem-Mkdir"></a>
+### Mkdir
 
 Use the mkdir function to recursively create a directory.
 
@@ -350,8 +339,8 @@ Use the mkdir function to recursively create a directory.
 await Fs.mkdir('/media/videos')
 ```
 
-<a name="FileSystem-ReadDir"></a>
-### ReadDir
+<a name="FileSystem-Readdir"></a>
+### Readdir
 
 Use the readdir function to return stat objects for the given directory path.
 
@@ -373,7 +362,7 @@ const url = URL.createObjectUrl(blob)
 <a name="FileSystem-Write"></a>
 ### Write
 
-Use the write function to write file content. If the file does not exist it is created. Intermediate directories are created recursively.
+Use the write and writeText functions to write file content.
 
 ```typescript
 await Fs.write('/path/file.dat', new Uint8Array([1, 2, 3, 4]))
@@ -384,7 +373,7 @@ await Fs.writeText('/path/file.txt', 'hello world')
 <a name="FileSystem-Read"></a>
 ### Read
 
-Use the read function will read content from a file.
+Use the read and readText functions will read content from a file.
 
 ```typescript
 const buffer = await fs.read('/path/file.dat')
@@ -395,7 +384,7 @@ const content = await Fs.readText('/path/file.txt')
 <a name="FileSystem-Delete"></a>
 ### Delete
 
-Use the delete function to delete a file or directory. Delete is recursive.
+Use the delete function to delete a file or directory.
 
 ```typescript
 await Fs.delete('/path/file.txt')
@@ -434,6 +423,14 @@ await Fs.writeText('/path/fileA.txt', '...')
 await Fs.move('/path/fileA.txt', '/backup')
 ```
 
+<a name="FileSystem-Watch"></a>
+### Watch
+
+Use the watch function to watch for file and directory events.
+
+```typescript
+Fs.watch('/dir', event => console.log(event))
+```
 
 ## Contribute
 

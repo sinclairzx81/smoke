@@ -61,7 +61,7 @@ export class FileSystem implements Dispose.Dispose {
     this.#readsize = 65536
   }
   // ----------------------------------------------------------------
-  // Properties
+  // Name
   // ----------------------------------------------------------------
   /** Gets the backing IndexedDB database name */
   public get name() {
@@ -79,10 +79,10 @@ export class FileSystem implements Dispose.Dispose {
     this.#database.close()
   }
   // ----------------------------------------------------------------
-  // Listen
+  // Watch
   // ----------------------------------------------------------------
-  /** Listens for file system events on the given path. */
-  public listen(path: string, handler: Events.EventHandler<FsEvents.FileSystemEvent>): Events.EventListener {
+  /** Watches for file and directory events on the given path. */
+  public watch(path: string, handler: Events.EventHandler<FsEvents.FileSystemEvent>): Events.EventListener {
     return this.#events.on(path, handler)
   }
   // ----------------------------------------------------------------
