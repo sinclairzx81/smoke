@@ -300,7 +300,7 @@ const sender = Media.send({ port: 5000 }, pattern.mediastream)
 <a name="FileSystem"></a>
 ## FileSystem
 
-Smoke includes a hierarchical file system built on top of IndexedDB which can store large binary and text files within the browser. The file system has support for streaming read and write, directory enumeration, copy, move, rename as well as file and directory watch events. It is built to act as a static file store for network servers but can be used as a general purpose file system for storing large files in the browser.
+Smoke provides a hierarchical file system able to store large files within the browser. The file system is backed by IndexedDB and has support for streaming read and write, directory enumeration, copy, move, rename as well as file and directory watch events. It is designed to act as a static file store for network services but can be used as a general purpose file system for applications needing to store large files in the browser.
 
 <a name="FileSystem-Open"></a>
 ### Open
