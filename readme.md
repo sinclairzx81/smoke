@@ -15,7 +15,7 @@
 
 ## Example
 
-Smoke allows browsers to run web server applications over WebRTC
+Smoke enables Browsers run micro Web Servers over WebRTC
 
 ```typescript
 import { Network } from '@sinclair/smoke'
@@ -30,7 +30,7 @@ const { Http } = new Network()
 
 // ------------------------------------------------------------------
 //
-// Create a Http Listener on a Port
+// Create a Http Listener on a Virtual Port
 //
 // ------------------------------------------------------------------
 
