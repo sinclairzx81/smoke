@@ -45,6 +45,7 @@ export class NetSocket implements Stream.Read<Uint8Array>, Stream.Write<Uint8Arr
     this.#mutex = new Async.Mutex()
     this.#readchannel = new Channel.Channel<Uint8Array>()
     this.#datachannel = datachannel
+    this.#datachannel.binaryType = 'arraybuffer'
     this.#datachannel.addEventListener('message', (event) => this.#onMessage(event))
     this.#datachannel.addEventListener('close', (event) => this.#onClose(event))
     this.#datachannel.addEventListener('error', (event) => this.#onError(event))

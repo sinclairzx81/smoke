@@ -1,6 +1,6 @@
 {
   "name": "@sinclair/smoke",
-  "version": "0.8.3",
+  "version": "0.8.4",
   "description": "Run Web Servers in Web Browsers over WebRTC",
   "type": "module",
   "main": "./index.mjs",
@@ -22,7 +22,7 @@
   "author": "sinclair",
   "license": "MIT",
   "devDependencies": {
-    "@sinclair/drift": "^0.9.0",
+    "@sinclair/drift": "^0.9.1",
     "@sinclair/hammer": "^0.18.0",
     "prettier": "^3.2.5",
     "typescript": "^5.4.3"
