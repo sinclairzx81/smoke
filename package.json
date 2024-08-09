@@ -22,7 +22,7 @@
   "author": "sinclair",
   "license": "MIT",
   "devDependencies": {
-    "@sinclair/drift": "^0.9.0",
+    "@sinclair/drift": "^0.9.1",
     "@sinclair/hammer": "^0.18.0",
     "prettier": "^3.2.5",
     "typescript": "^5.4.3"
