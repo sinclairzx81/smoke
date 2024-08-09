@@ -53,7 +53,7 @@ $ npm install @sinclair/smoke
 
 ## Overview
 
-Smoke is an experimental networking and storage framework for the browser that provides Http, Tcp and WebSocket emulation over WebRTC and large file storage via IndexedDB. It is built as a foundation for developing peer to peer services in the browser with each browser accessible via an application controlled virtual network.
+Smoke is an experimental browser networking and storage framework that provides Http, Tcp and WebSocket emulation over WebRTC and large file storage via IndexedDB. It is built as a foundation for developing peer to peer web services in the browser with each browser accessible via an application controlled virtual network.
 
 Smoke reshapes WebRTC into WinterCG compatible interfaces enabling traditional web server applications to be made portable between server and browser environments. It is developed in support of alternative software architectures where user centric services can be moved away from the cloud and run peer to peer in the browser.
 
@@ -143,7 +143,7 @@ const { Http } = new Network()
 <a name="Http-Listen"></a>
 ### Listen
 
-Use the Http listen function to receive Http requests from remote peers.
+Use the listen function to receive Http requests from remote peers.
 
 ```typescript
 Http.listen({ port: 5000 }, request => new Response('hello'))
@@ -152,7 +152,7 @@ Http.listen({ port: 5000 }, request => new Response('hello'))
 <a name="Http-Fetch"></a>
 ### Fetch
 
-Use Http fetch function to make a Http request to remote peers.
+Use the fetch function to make a Http request to remote peers.
 
 ```typescript
 const response = await Http.fetch('http://localhost:5000')
@@ -163,7 +163,7 @@ const message = await response.text()
 <a name="Http-Upgrade"></a>
 ### Upgrade
 
-Use upgrade function to convert a Http request into a WebSocket
+Use the upgrade function to convert a Http request into a WebSocket
 
 ```typescript
 Http.listen({ port: 5000 }, request => Http.upgrade(request, (socket) => socket.send('hello')))
@@ -172,7 +172,7 @@ Http.listen({ port: 5000 }, request => Http.upgrade(request, (socket) => socket.
 <a name="Http-Connect"></a>
 ### Connect
 
-Use connect function to establish a connection remote WebSocket server.
+Use the connect function to connect to a remote WebSocket server.
 
 ```typescript
 const socket = await Http.connect('ws://localhost:5000')
@@ -196,7 +196,7 @@ const { Net } = new Network()
 <a name="Net-Listen"></a>
 ### Listen
 
-Use the Net listen function to accept incoming sockets.
+Use the listen function to accept an incoming socket.
 
 ```typescript
 Net.listen({ port: 5000 }, async socket => {
@@ -236,7 +236,7 @@ const { Media } = new Network()
 <a name="Media-Listen"></a>
 ### Listen
 
-Use the listen function to listen for incoming MediaStream
+Use the listen function to listen for incoming MediaStream objects
 
 ```typescript
 Media.listen({ port: 6000 }, (receiver) => {
@@ -333,7 +333,7 @@ const exists = await Fs.exists('/path/file.txt')
 <a name="FileSystem-Mkdir"></a>
 ### Mkdir
 
-Use the mkdir function to recursively create a directory.
+Use the mkdir function to create a directory.
 
 ```typescript
 await Fs.mkdir('/media/videos')
