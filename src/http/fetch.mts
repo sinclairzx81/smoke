@@ -28,6 +28,7 @@ THE SOFTWARE.
 
 import { HttpListenerRequestInit, HttpListenerResponseInit } from './listener.mjs'
 
+import * as Async from '../async/index.mjs'
 import * as Buffer from '../buffer/index.mjs'
 import * as Stream from '../stream/index.mjs'
 import * as Net from '../net/index.mjs'
@@ -120,7 +121,7 @@ export async function fetch(net: Net.NetModule, endpoint: string, requestInit: R
   // send request body to server
   sendRequestBody(duplex, requestInit).catch((error) => console.error(error))
   // read server response signal
-  const signal = await readResponseSignal(duplex)
+  const signal = await Async.timeout(readResponseSignal(duplex), { timeout: 4000, error: new Error('A timeout occured reading the http response signal') })
   if (signal === null) {
     await duplex.close()
     throw Error(`Connection to ${endpoint} terminated unexpectedly`)
@@ -131,7 +132,7 @@ export async function fetch(net: Net.NetModule, endpoint: string, requestInit: R
     throw Error('Server is using alternate protocol')
   }
   // read server response init
-  const responseInit = await readListenerResponseInit(duplex)
+  const responseInit = await Async.timeout(readListenerResponseInit(duplex), { timeout: 4000, error: new Error('A timeout occured reading http response init') })
   if (responseInit === null) {
     await duplex.close()
     throw Error('Unable to parse server response headers')

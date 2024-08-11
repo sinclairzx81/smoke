@@ -35,7 +35,7 @@ import { WebRtcTrackListener, WebRtcTrackListenerAcceptCallback } from './track/
 // ------------------------------------------------------------------
 // WebRtcMessage
 // ------------------------------------------------------------------
-export type WebRtcMessage = WebRtcCandidateMessage | WebRtcDescriptionMessage
+export type WebRtcMessage = WebRtcCandidateMessage | WebRtcDescriptionMessage | WebRtcTerminateMessage
 
 export type WebRtcCandidateMessage = {
   type: 'candidate'
@@ -44,6 +44,9 @@ export type WebRtcCandidateMessage = {
 export type WebRtcDescriptionMessage = {
   type: 'description'
   description: RTCSessionDescription
+}
+export type WebRtcTerminateMessage = {
+  type: 'terminate'
 }
 // ------------------------------------------------------------------
 // WebRtcPeer
@@ -108,6 +111,11 @@ export class WebRtcModule implements Dispose.Dispose {
     }, 4000)
     return await open.promise()
   }
+   /** Terminates the RTCPeerConnection associated with this remoteAddress and asks the remote peer to do the same  */
+  public async terminate(remoteAddress: string) {
+    this.#hub.send({ to: remoteAddress, data: { type: 'terminate' }})
+    await this.#terminateConnection(remoteAddress)
+  }
   // ------------------------------------------------------------------
   // Media
   // ------------------------------------------------------------------
@@ -170,7 +178,7 @@ export class WebRtcModule implements Dispose.Dispose {
       lock.dispose()
     }
   }
-  async onHubCandidate(message: Hubs.HubMessage<WebRtcCandidateMessage>) {
+  async #onHubCandidate(message: Hubs.HubMessage<WebRtcCandidateMessage>) {
     if (message.data.candidate === null) return
     const peer = await this.#resolvePeer(message.from)
     try {
@@ -184,7 +192,8 @@ export class WebRtcModule implements Dispose.Dispose {
     const data = message.data as WebRtcMessage
     switch (data.type) {
       case 'description': return this.#onHubDescription(message as never)
-      case 'candidate': return this.onHubCandidate(message as never)
+      case 'candidate': return this.#onHubCandidate(message as never)
+      case 'terminate': return this.#terminateConnection(message.from)
     }
   }
   // ------------------------------------------------------------------
@@ -217,7 +226,7 @@ export class WebRtcModule implements Dispose.Dispose {
     if(!this.#channelListeners.has(port)) return datachannel.close()
     const listener = this.#channelListeners.get(port)!
     event.channel.addEventListener('close', () => peer.datachannels.delete(datachannel))
-    peer.datachannels.add(datachannel)    
+    peer.datachannels.add(datachannel)
     listener.accept(peer, datachannel)
   }
   #onPeerTrack(peer: WebRtcPeer, event: RTCTrackEvent) {

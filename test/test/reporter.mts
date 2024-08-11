@@ -107,14 +107,17 @@ export class StdoutReporter implements Reporter {
   #write(message: string) {
     this.#writer.write(Buffer.encode(message))
   }
+  #ansi(message: string) {
+    this.#writer.write(Buffer.encode(message))
+  }
   // ----------------------------------------------------------------
   // Handlers
   // ----------------------------------------------------------------
   public onContextBegin(context: DescribeContext) {
     if (context.name === 'root') return
-    this.#write(Ansi.color.lightBlue)
+    this.#ansi(Ansi.color.lightBlue)
     this.#write(context.name)
-    this.#write(Ansi.reset)
+    this.#ansi(Ansi.reset)
     this.#newline()
   }
   public onContextEnd(context: DescribeContext) {
@@ -122,51 +125,51 @@ export class StdoutReporter implements Reporter {
     this.#newline()
   }
   public onUnitBegin(unit: ItContext) {
-    this.#write(Ansi.color.gray)
+    this.#ansi(Ansi.color.gray)
     this.#write(` - ${unit.name}`)
-    this.#write(Ansi.reset)
+    this.#ansi(Ansi.reset)
   }
   public onUnitEnd(unit: ItContext) {
     if (unit.error === null) {
-      this.#write(Ansi.color.green)
+      this.#ansi(Ansi.color.green)
       this.#write(` pass`)
-      this.#write(Ansi.reset)
-      this.#write(Ansi.color.lightBlue)
+      this.#ansi(Ansi.reset)
+      this.#ansi(Ansi.color.lightBlue)
       this.#write(` ${unit.elapsed.toFixed()} ms`)
-      this.#write(Ansi.reset)
+      this.#ansi(Ansi.reset)
     } else {
-      this.#write(Ansi.color.lightRed)
+      this.#ansi(Ansi.color.lightRed)
       this.#write(' fail')
-      this.#write(Ansi.reset)
+      this.#ansi(Ansi.reset)
     }
     this.#newline()
   }
   #printFailureSummary(context: DescribeContext) {
     for (const error of context.failures()) {
-      this.#write(Ansi.color.lightBlue)
+      this.#ansi(Ansi.color.lightBlue)
       this.#write(`${error.context} `)
-      this.#write(Ansi.reset)
-      this.#write(Ansi.color.gray)
+      this.#ansi(Ansi.reset)
+      this.#ansi(Ansi.color.gray)
       this.#write(`${error.unit}`)
-      this.#write(Ansi.reset)
+      this.#ansi(Ansi.reset)
       this.#newline()
       this.#newline()
 
       this.#write(Ansi.color.lightRed)
       this.#write(`  error`)
-      this.#write(Ansi.reset)
+      this.#ansi(Ansi.reset)
       this.#write(`:  ${error.error.message}`)
       this.#newline()
       if (error.error instanceof Assert.AssertError) {
-        this.#write(Ansi.color.lightGreen)
+        this.#ansi(Ansi.color.lightGreen)
         this.#write(`  expect`)
-        this.#write(Ansi.reset)
+        this.#ansi(Ansi.reset)
         this.#write(`: ${ValueFormatter.format(error.error.expect)}`)
         this.#newline()
 
-        this.#write(Ansi.color.lightRed)
+        this.#ansi(Ansi.color.lightRed)
         this.#write(`  actual`)
-        this.#write(Ansi.reset)
+        this.#ansi(Ansi.reset)
         this.#write(`: ${ValueFormatter.format(error.error.actual)}`)
         this.#newline()
       }
@@ -175,21 +178,21 @@ export class StdoutReporter implements Reporter {
     this.#newline()
   }
   #printCompletionSummary(context: DescribeContext) {
-    this.#write(Ansi.color.lightBlue)
+    this.#ansi(Ansi.color.lightBlue)
     this.#write('elapsed')
-    this.#write(Ansi.reset)
+    this.#ansi(Ansi.reset)
     this.#write(`: ${context.elapsed.toFixed(0)} ms`)
     this.#newline()
 
-    this.#write(Ansi.color.lightBlue)
+    this.#ansi(Ansi.color.lightBlue)
     this.#write('passed')
-    this.#write(Ansi.reset)
+    this.#ansi(Ansi.reset)
     this.#write(`:  ${context.passCount}`)
     this.#newline()
 
-    this.#write(Ansi.color.lightBlue)
+    this.#ansi(Ansi.color.lightBlue)
     this.#write('failed')
-    this.#write(Ansi.reset)
+    this.#ansi(Ansi.reset)
     this.#write(`:  ${context.failCount}`)
     this.#newline()
   }
