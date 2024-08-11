@@ -99,6 +99,7 @@ export class WebRtcModule implements Dispose.Dispose {
     const open = new Async.Deferred<[WebRtcPeer, RTCDataChannel]>()
     const peer = await this.#resolvePeer(await this.#resolveAddress(remoteAddress))
     const datachannel = peer.connection.createDataChannel(port.toString(), { ordered: true, maxRetransmits: 16 })
+    datachannel.binaryType = "arraybuffer"
     datachannel.addEventListener('open', () => {
       peer.datachannels.add(datachannel)
       open.resolve([peer, datachannel])
