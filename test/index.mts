@@ -20,6 +20,12 @@ import './os/index.mjs'
 // Runner
 // ------------------------------------------------------------------
 declare const Drift: any
-Test.run({ filter: Drift.args[0] }).then((result) => {
-  return result.success ? Drift.close(0) : Drift.close(1)
-})
+if ('Drift' in globalThis) {
+  Test.run({ filter: Drift.args[0] }).then((result) => {
+    return result.success ? Drift.close(0) : Drift.close(1)
+  })
+} else {
+  Test.run({ filter: '' }).then((result) => {
+    console.log('done', result)
+  })
+}
