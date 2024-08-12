@@ -26,34 +26,20 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-// ------------------------------------------------------------------
-// Internal API
-// ------------------------------------------------------------------
+export type BrowserType = 'Firefox' | 'Chromium' | 'Safari' | 'Internet Explorer' | 'Unknown'
 
-export * as Agent from './agent/index.mjs'
-export * as Async from './async/index.mjs'
-export * as Buffer from './buffer/index.mjs'
-export * as Channel from './channel/index.mjs'
-export * as Crypto from './crypto/index.mjs'
-export * as Dispose from './dispose/index.mjs'
-export * as Events from './events/index.mjs'
-export * as FileSystem from './filesystem/index.mjs'
-export * as Hubs from './hubs/index.mjs'
-export * as IndexedDb from './indexeddb/index.mjs'
-export * as Os from './os/index.mjs'
-export * as Path from './path/index.mjs'
-export * as Stream from './stream/index.mjs'
-export * as Url from './url/index.mjs'
-
-// ------------------------------------------------------------------
-// Network Module API
-// ------------------------------------------------------------------
-export * from './http/index.mjs'
-export * from './media/index.mjs'
-export * from './net/index.mjs'
-export * from './webrtc/index.mjs'
-
-// ------------------------------------------------------------------
-// Network API
-// ------------------------------------------------------------------
-export { Network } from './network.mjs'
+/** Returns the Browser Type */
+export function browserType(): BrowserType {
+  const userAgent = navigator.userAgent.toLowerCase()
+  if (userAgent.includes('firefox')) {
+    return 'Firefox'
+  } else if (userAgent.includes('edg/') || (userAgent.includes('chrome') && !userAgent.includes('chromium'))) {
+    return 'Chromium'
+  } else if (userAgent.includes('safari') && !userAgent.includes('chrome') && !userAgent.includes('chromium')) {
+    return 'Safari'
+  } else if (userAgent.includes('msie') || userAgent.includes('trident/')) {
+    return 'Internet Explorer'
+  } else {
+    return 'Unknown'
+  }
+}

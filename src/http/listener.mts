@@ -26,6 +26,7 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
+import * as Agent from '../agent/index.mjs'
 import * as Dispose from '../dispose/index.mjs'
 import * as Buffer from '../buffer/index.mjs'
 import * as Stream from '../stream/index.mjs'
@@ -114,7 +115,11 @@ export class HttpListener implements Dispose.Dispose {
     }
     await stream.close()
   }
-  #createReadableFromRequestInit(listenerRequestInit: HttpListenerRequestInit, stream: Stream.FrameDuplex) {
+  // ----------------------------------------------------------------
+  // Body
+  // ----------------------------------------------------------------
+  /** (Chromium) Creates a ReadableStream from a HttpListenerRequestInit */
+  #createReadableStreamFromRequestInit(listenerRequestInit: HttpListenerRequestInit, stream: Stream.FrameDuplex) {
     if (['HEAD', 'GET'].includes(listenerRequestInit.method)) return null
     return new ReadableStream({
       pull: async (controller) => {
@@ -127,22 +132,41 @@ export class HttpListener implements Dispose.Dispose {
       },
     })
   }
+  /** (Firefox) Creates a Blob from a HttpListenerRequestInit */
+  async #createBlobFromRequestInit(listenerRequestInit: HttpListenerRequestInit, stream: Stream.FrameDuplex): Promise<Blob | null> {
+    if (['HEAD', 'GET'].includes(listenerRequestInit.method)) return null
+    const buffers: Uint8Array[] = []
+    while(true) {
+      const next = await stream.read()
+      if(next === null || Buffer.equals(next, Signal.REQUEST_END)) break
+      buffers.push(next)
+    }
+    return new Blob(buffers)
+  }
+  async #createBodyFromRequestInit(listenerRequestInit: HttpListenerRequestInit, stream: Stream.FrameDuplex): Promise<ReadableStream | Blob | null> {
+    return Agent.browserType() === 'Firefox'
+      ? this.#createBlobFromRequestInit(listenerRequestInit, stream)
+      : this.#createReadableStreamFromRequestInit(listenerRequestInit, stream)
+  }
+  // ----------------------------------------------------------------
+  // Request
+  // ----------------------------------------------------------------
   async #onRequest(socket: Net.NetSocket) {
     const stream = new Stream.FrameDuplex(socket)
     const listenerRequestInit = await this.#readListenerRequestInit(stream)
     if (listenerRequestInit === null) return await stream.close()
     const url = new URL(`http://${socket.local.hostname}:${socket.local.port}${listenerRequestInit.url}`)
     const headers = new Headers(listenerRequestInit.headers)
-    const body = this.#createReadableFromRequestInit(listenerRequestInit, stream)
+    const body = await this.#createBodyFromRequestInit(listenerRequestInit, stream)
     const request = new Request(url, {
       method: listenerRequestInit.method,
       headers: headers,
-      body: body,
+      body,
       duplex: 'half',
     } as RequestInit)
     const info = { local: socket.local, remote: socket.remote }
     const response = await this.#accept(request, info)
-    if(UpgradeMap.has(request)) {
+    if (UpgradeMap.has(request)) {
       const callback = UpgradeMap.get(request)!
       await stream.write(Signal.WEBSOCKET)
       callback(new HttpServerWebSocket(stream))
