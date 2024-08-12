@@ -29,7 +29,7 @@ THE SOFTWARE.
 import * as Async from './async/index.mjs'
 import { DescribeContext } from './describe.mjs'
 import { Options } from './options.mjs'
-import { StdoutReporter } from './reporter.mjs'
+import { DocumentReporter } from './reporter.mjs'
 import { Result } from './result.mjs'
 import { ItContext } from './it.mjs'
 
@@ -64,7 +64,7 @@ export function after(callback: Function) {
 function resolveOptions<T extends Partial<Options>>(options: T): Options {
   return {
     filter: options.filter ?? '',
-    reporter: options.reporter ?? new StdoutReporter(),
+    reporter: options.reporter ?? new DocumentReporter(),
   }
 }
 export async function run(options: Partial<Options> = {}): Promise<Result> {

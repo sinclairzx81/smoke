@@ -11,6 +11,7 @@
     "format": "hammer task format",
     "clean": "hammer task clean",
     "test": "hammer task test",
+    "test:serve": "hammer task test_serve",
     "build": "hammer task build",
     "publish": "hammer task publish"
   },
