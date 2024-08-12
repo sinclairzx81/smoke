@@ -49,7 +49,7 @@ export class NetModule {
   /** Establishes a connection to a remote Net listener */
   public async connect(options: NetConnectOptions): Promise<NetSocket> {
     const [hostname, port] = [options.hostname ?? 'localhost', options.port]
-    const [peer, datachannel] = await this.#webrtc.connect(hostname, port)
+    const [peer, datachannel] = await this.#webrtc.connect(hostname, port, { ordered: true, maxRetransmits: 16 })
     return new NetSocket(peer, datachannel)
   }
 }

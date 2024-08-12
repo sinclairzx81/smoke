@@ -1,9 +1,0 @@
-html,
-body {
-  background: #111;
-}
-canvas {
-  width: 320px;
-  height: 200px;
-  border: 1px dashed;
-}

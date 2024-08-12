@@ -95,21 +95,14 @@ export class WebRtcModule implements Dispose.Dispose {
     return listener
   }
   /** Connects to a remote peer */
-  public async connect(remoteAddress: string, port: number): Promise<[WebRtcPeer, RTCDataChannel]> {
-    const open = new Async.Deferred<[WebRtcPeer, RTCDataChannel]>()
+  public async connect(remoteAddress: string, port: number, options: RTCDataChannelInit): Promise<[WebRtcPeer, RTCDataChannel]> {
     const peer = await this.#resolvePeer(await this.#resolveAddress(remoteAddress))
-    const datachannel = peer.connection.createDataChannel(port.toString(), { ordered: true, maxRetransmits: 16 })
-    datachannel.addEventListener('open', () => {
-      peer.datachannels.add(datachannel)
-      open.resolve([peer, datachannel])
-    })
-    datachannel.addEventListener('close', () => {
-      peer.datachannels.delete(datachannel)
-    })
-    setTimeout(() => {
-      open.reject(new Error(`Connection to '${remoteAddress}:${port}' timed out`))
-    }, 4000)
-    return await open.promise()
+    const datachannel = peer.connection.createDataChannel(port.toString(), options)
+    const awaiter = new Async.Deferred<[WebRtcPeer, RTCDataChannel]>()
+    datachannel.addEventListener('close', () => peer.datachannels.delete(datachannel))
+    datachannel.addEventListener('open', () => peer.datachannels.add(datachannel))
+    datachannel.addEventListener('open', () => awaiter.resolve([peer, datachannel]))
+    return Async.timeout(awaiter.promise(), { timeout: 4000, error: new Error(`Connection to '${remoteAddress}:${port}' timed out`) })
   }
    /** Terminates the RTCPeerConnection associated with this remoteAddress and asks the remote peer to do the same  */
   public async terminate(remoteAddress: string) {

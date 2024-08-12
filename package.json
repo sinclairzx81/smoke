@@ -1,6 +1,6 @@
 {
   "name": "@sinclair/smoke",
-  "version": "0.8.5",
+  "version": "0.8.6",
   "description": "Run Web Servers in Web Browsers over WebRTC",
   "type": "module",
   "main": "./index.mjs",
@@ -11,6 +11,7 @@
     "format": "hammer task format",
     "clean": "hammer task clean",
     "test": "hammer task test",
+    "test:serve": "hammer task test_serve",
     "build": "hammer task build",
     "publish": "hammer task publish"
   },

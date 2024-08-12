@@ -23,10 +23,13 @@ export async function start(target = 'target/example') {
 // -------------------------------------------------------------------------------
 // Test
 // -------------------------------------------------------------------------------
+export async function test_serve(target = 'target/test') {
+  await shell(`hammer serve test/index.html --dist ${target}`)
+}
 export async function test(filter = '', target = 'target/test') {
   await shell(`hammer build test/index.mts --dist ${target} --platform node`)
   const server = require('http').createServer((_, res) => res.end('<html><head></head></html>')).listen(5010)
-  await shell(`drift url http://localhost:5010 wait 1000 run ./${target}/index.mjs args ${filter}`)
+  await shell(`drift url http://localhost:5010 wait 1000 run ./${target}/index.mjs args "${filter}"`)
   server.close()
 }
 // -------------------------------------------------------------------------------

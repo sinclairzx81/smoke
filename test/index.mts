@@ -17,15 +17,20 @@ import './net/index.mjs'
 import './os/index.mjs'
 
 // ------------------------------------------------------------------
-// Runner
+// Drift
 // ------------------------------------------------------------------
 declare const Drift: any
-if ('Drift' in globalThis) {
-  Test.run({ filter: Drift.args[0] }).then((result) => {
-    return result.success ? Drift.close(0) : Drift.close(1)
-  })
-} else {
-  Test.run({ filter: '' }).then((result) => {
-    console.log('done', result)
-  })
+
+// ------------------------------------------------------------------
+// Runner
+// ------------------------------------------------------------------
+function resolve_filter() {
+  if ('Drift' in globalThis) return Drift.args[0]
+  const searchParams = new URLSearchParams(window.location.search)
+  return searchParams.get('filter') ?? ''
 }
+
+Test.run({ filter: resolve_filter() }).then((result) => {
+  if ('Drift' in globalThis) return result.success ? Drift.close(0) : Drift.close(1)
+  console.log(result)
+})
