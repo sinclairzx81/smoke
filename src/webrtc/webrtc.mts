@@ -58,6 +58,29 @@ export interface WebRtcPeer {
   remoteAddress: string
   makingOffer: boolean
   ignoreOffer: boolean
+  bytesSent: number
+  bytesReceived: number
+}
+// ------------------------------------------------------------------
+// WebRtcPeerStatistic
+// ------------------------------------------------------------------
+export interface WebRtcPeerStatistic {
+  /** The local address of this peer */
+  localAddress: string
+  /** The remote address of this peer */
+  remoteAddress: string
+  /** If this peer is making an offer */
+  makingOffer: boolean
+  /** If this peer is ignoring offers */
+  ignoreOffer: boolean
+  /** The number of bytes sent to this peer */
+  bytesSent: number
+  /** The number of bytes received from this peer */
+  bytesReceived: number
+  /** The number of send bytes being buffered for this peer */
+  bytesBuffered: number
+  /** The number of data channels being managed by this peer */
+  channelCount: number
 }
 // ------------------------------------------------------------------
 // WebRtc
@@ -80,6 +103,31 @@ export class WebRtcModule implements Dispose.Dispose {
     this.#trackListeners = new Set<WebRtcTrackListener>()
     this.#mutex = new Async.Mutex()
     this.#setupLocalhost()
+  }
+  // ------------------------------------------------------------------
+  // Statistics
+  // ------------------------------------------------------------------
+  /** Gets network statistics for each peer managed by this module */
+  public stats(): WebRtcPeerStatistic[] {
+    let [statistics, index]: [WebRtcPeerStatistic[], number] = [Array.from({ length: this.#peers.size }), 0]
+    for(const peer of this.#peers.values()) {
+      let bytesBuffered = 0
+      for(const channel of peer.datachannels) {
+        bytesBuffered += channel.bufferedAmount
+      }
+      statistics[index] = { 
+        localAddress: peer.localAddress,
+        remoteAddress: peer.remoteAddress,
+        makingOffer: peer.makingOffer,
+        ignoreOffer: peer.ignoreOffer,
+        bytesSent: peer.bytesSent,
+        bytesReceived: peer.bytesReceived,
+        channelCount: peer.datachannels.size,
+        bytesBuffered: bytesBuffered,
+      }
+      index += 1
+    }
+    return statistics
   }
   // ------------------------------------------------------------------
   // DataChannels
@@ -245,7 +293,7 @@ export class WebRtcModule implements Dispose.Dispose {
     const configuration = await this.#hub.configuration()
     const localAddress = await this.#hub.address()
     const connection = new RTCPeerConnection(configuration)
-    const peer: WebRtcPeer = { connection, datachannels: new Set<RTCDataChannel>(), localAddress, remoteAddress, makingOffer: false, ignoreOffer: true }
+    const peer: WebRtcPeer = { connection, datachannels: new Set<RTCDataChannel>(), localAddress, remoteAddress, makingOffer: false, ignoreOffer: true, bytesSent: 0, bytesReceived: 0 }
     this.#setupPeerEvents(peer)
     this.#peers.set(remoteAddress, peer)
     return peer
@@ -300,8 +348,8 @@ export class WebRtcModule implements Dispose.Dispose {
     }
     const connection0 = new RTCPeerConnection({})
     const connection1 = new RTCPeerConnection({})
-    const peer0: WebRtcPeer = { connection: connection0, datachannels: new Set<RTCDataChannel>(), localAddress: 'loopback:0', remoteAddress: 'loopback:1', makingOffer: false, ignoreOffer: false }
-    const peer1: WebRtcPeer = { connection: connection1, datachannels: new Set<RTCDataChannel>(), localAddress: 'loopback:1', remoteAddress: 'loopback:0', makingOffer: false, ignoreOffer: false }
+    const peer0: WebRtcPeer = { connection: connection0, datachannels: new Set<RTCDataChannel>(), localAddress: 'loopback:0', remoteAddress: 'loopback:1', makingOffer: false, ignoreOffer: false, bytesSent: 0, bytesReceived: 0 }
+    const peer1: WebRtcPeer = { connection: connection1, datachannels: new Set<RTCDataChannel>(), localAddress: 'loopback:1', remoteAddress: 'loopback:0', makingOffer: false, ignoreOffer: false, bytesSent: 0, bytesReceived: 0 }
     this.#setupPeerEvents(peer0)
     this.#setupPeerEvents(peer1)
     this.#peers.set(peer0.remoteAddress, peer0)

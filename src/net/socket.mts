@@ -89,6 +89,7 @@ export class NetSocket implements Stream.Read<Uint8Array>, Stream.Write<Uint8Arr
     this.#readchannel.error(event as any)
   }
   #onMessage(event: MessageEvent) {
+    if(event.data instanceof ArrayBuffer) this.#peer.bytesReceived += event.data.byteLength
     this.#readchannel.send(new Uint8Array(event.data))
   }
   #onClose(event: Event) {
@@ -143,6 +144,7 @@ export class NetSocket implements Stream.Read<Uint8Array>, Stream.Write<Uint8Arr
         await this.#waitForMinimumWriteThreshold()
         const buffer = reader.read(this.#sendMessageSize())
         if (this.#isDataChannelOpen() && buffer !== null) {
+          this.#peer.bytesSent += buffer.byteLength
           this.#datachannel.send(buffer)
         } else {
           break
