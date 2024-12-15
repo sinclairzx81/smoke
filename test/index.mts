@@ -15,6 +15,7 @@ import './filesystem/index.mjs'
 import './http/index.mjs'
 import './net/index.mjs'
 import './os/index.mjs'
+import './proxy/index.mjs'
 
 // ------------------------------------------------------------------
 // Drift

@@ -26,7 +26,18 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-export * from './frames/index.mjs'
-export * from './close.mjs'
-export * from './read.mjs'
-export * from './write.mjs'
+import { ProxyListener, ListenCallback } from './listener.mjs'
+import * as Setup from './setup.mjs'
+
+export interface ProxyListenOptions {
+  /** The path this listener should intercept Http requests */
+  path: string
+  /** (Optional) The path to the ServiceWorker script. The default is `worker.js` */
+  workerPath?: string
+}
+/** Listens for http requests made to the given path prefix */
+export async function listen(options: ProxyListenOptions, callback: ListenCallback): Promise<ProxyListener> {
+  const workerPath = options.workerPath || 'worker.js'
+  const { clientId, port, worker } = await Setup.resolveWorker({ path: options.path, workerPath })
+  return new ProxyListener(worker, port, clientId, callback)
+}
