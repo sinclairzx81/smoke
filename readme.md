@@ -53,9 +53,9 @@ $ npm install @sinclair/smoke
 
 ## Overview
 
-Smoke is an experimental browser networking and storage framework that provides Http, Tcp and WebSocket emulation over WebRTC and large file storage via IndexedDB. It is built as a foundation for developing peer to peer web services in the browser with each browser accessible via an application controlled virtual network.
+Smoke is an experimental browser networking and storage framework that provides Http, Tcp, and WebSocket emulation over WebRTC, as well as large file storage using IndexedDB. It is designed as a foundation for developing peer-to-peer web services directly in the browser, with each browser accessible through an application-controlled virtual network.
 
-Smoke reshapes WebRTC into WinterCG compatible interfaces enabling traditional web server applications to be made portable between server and browser environments. It is developed in support of alternative software architectures where user centric services can be moved away from the cloud and run peer to peer in the browser.
+Smoke reshapes WebRTC into standard Http compatible interfaces enabling traditional web server applications to be made portable between server and browser environments. It is developed in support of alternative software architectures where user centric services can be moved away from the cloud and run peer to peer in the browser.
 
 Licence MIT
 
@@ -78,6 +78,9 @@ Licence MIT
   - [Audio](#Media-Audio)
   - [Video](#Media-Video)
   - [Pattern](#Media-Pattern)
+- [Proxy](#Proxy)
+  - [Listen](#Proxy-Listen)
+  - [Worker](#Proxy-Worker)
 - [FileSystem](#FileSystem)
   - [Open](#FileSystem-Open)
   - [Stat](#FileSystem-Stat)
@@ -295,6 +298,41 @@ Use the pattern function to generate a MediaStream test pattern. This function c
 const pattern = Media.pattern()
 
 const sender = Media.send({ port: 5000 }, pattern.mediastream)
+```
+
+<a name="Proxy"></a>
+## Proxy
+
+A Smoke Proxy enables a web page to intercept outbound HTTP requests. It uses a Service Worker to redirect these requests back to the calling page, allowing the page to handle its own requests. This functionality supports both fetch requests and referenced assets embedded in HTML. Currently, the Smoke Proxy is supported only in Chromium-based browsers.
+
+<a name="Proxy-Listen"></a>
+### Listen
+
+Use the listen function to intercept Http requests made to a given path.
+
+```typescript
+import { Proxy } from '@sinclair/smoke'
+
+Proxy.listen({ path: '/some-path', workerPath: 'worker.js' }, request => {
+
+  return new Response('hello world')
+})
+
+// ...
+
+const result = await fetch('/some-path/foo').then(res => res.text())
+
+```
+
+<a name="Proxy-Worker"></a>
+### Worker
+
+The Proxy requires a Service Worker script to be loaded at the root path of the website. Smoke provides a prebuilt worker script that you can copy into the website's root directory.
+
+```bash
+# Copy this JavaScript file to the website root.
+
+node_modules/@sinclair/smoke/worker.js
 ```
 
 <a name="FileSystem"></a>

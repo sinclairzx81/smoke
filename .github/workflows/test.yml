@@ -9,7 +9,7 @@ jobs:
     timeout-minutes: 2
     strategy:
       matrix:
-        node: [20.x]
+        node: [22.x]
         os: [ubuntu-latest]
     steps:
       - uses: actions/checkout@v4

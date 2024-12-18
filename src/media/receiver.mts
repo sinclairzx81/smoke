@@ -107,7 +107,6 @@ export class MediaReceiver {
       const data = JSON.parse(Buffer.decode(buffer))
       return new MessageEvent('message', { data })
     } catch {
-      console.log(Buffer.decode(buffer))
       return null
     }
   }

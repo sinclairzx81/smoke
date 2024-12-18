@@ -26,4 +26,4 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-export * from './iterator.mjs'
+export * from './proxy/index.mjs'

@@ -42,6 +42,7 @@ export * as Hubs from './hubs/index.mjs'
 export * as IndexedDb from './indexeddb/index.mjs'
 export * as Os from './os/index.mjs'
 export * as Path from './path/index.mjs'
+export * as Proxy from './proxy/index.mjs'
 export * as Stream from './stream/index.mjs'
 export * as Url from './url/index.mjs'
 

@@ -1,4 +1,4 @@
-import { Network, FileSystem } from '@sinclair/smoke'
+import { Network, FileSystem, Proxy } from '@sinclair/smoke'
 
 // ------------------------------------------------------------------
 // Store Static Files
@@ -27,3 +27,15 @@ Http.listen({ port: 5000 }, (request) => {
 const html = await Http.fetch('http://localhost:5000/index.html').then((x) => x.text())
 
 console.log(html)
+
+// ------------------------------------------------------------------
+// Proxy Intecept
+// ------------------------------------------------------------------
+
+await Proxy.listen({ path: '/proxy' }, (request) => {
+  return new Response('hello from proxy')
+})
+
+const result = await fetch('/proxy').then((res) => res.text())
+
+console.log(result)

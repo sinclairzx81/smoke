@@ -77,11 +77,11 @@ export function decodeAny(value: Uint8Array): [MessageType, ArrayBuffer] {
     case MessageType.MessageData:
       return [MessageType.MessageData, data.buffer]
     case MessageType.MessageText:
-      return [MessageType.MessageText, data]
+      return [MessageType.MessageText, data.buffer]
     case MessageType.Ping:
-      return [MessageType.Ping, data]
+      return [MessageType.Ping, data.buffer]
     case MessageType.Pong:
-      return [MessageType.Pong, data]
+      return [MessageType.Pong, data.buffer]
     default:
       throw Error('Unknown protocol type')
   }
